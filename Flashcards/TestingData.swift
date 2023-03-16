@@ -8,13 +8,13 @@
 import Foundation
 
 class TestingData {
-    static let categories = [
-        Category(isSelected: false, name: "first"),
-        Category(isSelected: false, name: "second"),
-        Category(isSelected: false, name: "third"),
+     var categories = [
+        Category(isSelected: false, name: "all"),
+        Category(isSelected: false, name: "my words"),
+        Category(isSelected: false, name: "dictionary"),
     ]
     
-    static let words = [
+    lazy var words = [
         Word(name: "some word1", category: categories[0]),
         Word(name: "some word1", category: categories[0]),
         Word(name: "some word1", category: categories[0]),

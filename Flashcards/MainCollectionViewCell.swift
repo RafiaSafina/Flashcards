@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainCollectionViewCell: UICollectionViewCell {
+final class MainCollectionViewCell: UICollectionViewCell {
 
     static let reuseIdentifier = "wordCell"
     
@@ -20,10 +20,12 @@ class MainCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
+    
+    
     private var nameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
