@@ -8,20 +8,20 @@
 import Foundation
 
 class TestingData {
-     var categories = [
+    static var categories = [
         Category(isSelected: false, name: "all"),
         Category(isSelected: false, name: "my words"),
         Category(isSelected: false, name: "dictionary"),
     ]
     
-    lazy var words = [
-        Word(name: "some word1", category: categories[0]),
-        Word(name: "some word1", category: categories[0]),
-        Word(name: "some word1", category: categories[0]),
-        Word(name: "some word1", category: categories[0]),
+    static var words = [
+        Word(name: "some word1", category: categories[1]),
+        Word(name: "some word1", category: categories[1]),
+        Word(name: "some word1", category: categories[1]),
+        Word(name: "some word1", category: categories[1]),
         Word(name: "some word2", category: categories[1]),
-        Word(name: "some word2", category: categories[1]),
-        Word(name: "some word2", category: categories[1]),
+        Word(name: "some word2", category: categories[2]),
+        Word(name: "some word2", category: categories[2]),
         Word(name: "some word3", category: categories[2]),
         Word(name: "some word3", category: categories[2]),
         Word(name: "some word3", category: categories[2]),

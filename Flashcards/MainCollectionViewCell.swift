@@ -13,13 +13,11 @@ final class MainCollectionViewCell: UICollectionViewCell {
     
     private var appearanceView: UIView = {
         let view = UIView()
+        view.backgroundColor = .systemPink.withAlphaComponent(0.2)
         view.layer.cornerRadius = 16
-        view.layer.borderColor = UIColor.lightGray.cgColor
-        view.layer.borderWidth = 1
         view.translatesAutoresizingMaskIntoConstraints = false 
         return view
     }()
-    
     
     
     private var nameLabel: UILabel = {

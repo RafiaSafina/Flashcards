@@ -9,10 +9,14 @@ import UIKit
 
 final class MenuCell: UICollectionViewCell {
     
+    static let cellID = "menuCellID"
+    
     private let label: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.layer.cornerRadius = 14
+        label.layer.borderWidth = 3
+        label.layer.borderColor = UIColor.white.cgColor
+        label.layer.cornerRadius = 32
         label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 20, weight: .heavy)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -21,7 +25,7 @@ final class MenuCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = .systemBlue
+        contentView.backgroundColor = .white
     }
     
     required init?(coder: NSCoder) {
@@ -34,15 +38,19 @@ final class MenuCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
-            label.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor),
-            label.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor),
+            label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
+            label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
     
     override var isSelected: Bool {
         didSet {
-            label.textColor = isSelected ? .white  : .darkText
+            label.layer.borderColor = isSelected
+            ? UIColor.systemPink.withAlphaComponent(0.5).cgColor
+            : UIColor.white.cgColor
+        
+            
         }
     }
     
