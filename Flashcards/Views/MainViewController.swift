@@ -8,12 +8,14 @@
 import UIKit
 
 final class MainViewController: UIViewController {
-
+    
+    private var categories = TemporaryData.categories
+    
+    private var myWords: [Word] = []
+    private var dictionaryWords: [Word] = []
     private var filteredWords: [Word] = []
-    private var allWords = TestingData.words.shuffled()
-    
-    private var categories = TestingData.categories
-    
+    private lazy var allWords: [Word] = myWords
+
     private let menuBarCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 0
@@ -24,44 +26,13 @@ final class MainViewController: UIViewController {
         return collectionView
     }()
     
-    private let wordsCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 0, right: 0)
-        collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 30, left: 0, bottom: 0, right: 0)
-        collectionView.register(MainCollectionViewCell.self, forCellWithReuseIdentifier: MainCollectionViewCell.reuseIdentifier)
-        collectionView.backgroundColor = .white
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        return collectionView
-    }()
-    
-    private let bottomView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    
-    private lazy var addButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.bounds.size.width = 80
-        button.bounds.size.height = 80
-        button.layer.cornerRadius = button.bounds.size.width / 2
-        button.layer.backgroundColor = UIColor.white.cgColor
-        let image = UIImage(named: "plus")
-        button.setImage(image, for: .normal)
-        button.tintColor = .systemPink
-        button.addTarget(self, action: #selector(addButtonPressed), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    private let wordsCollectionView = WordsCollectionView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        filteredWords = allWords
         view.backgroundColor = .white
+        fetchData()
+        filteredWords = allWords
         setNavigationBar()
         setLayout()
         wordsCollectionView.delegate = self
@@ -78,26 +49,61 @@ final class MainViewController: UIViewController {
         
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+
+        let learnButton = UIBarButtonItem(
+            title: "Learn",
+            style: .plain,
+            target: self,
+            action: #selector(startButtonPressed)
+        )
         
         let addButton = UIBarButtonItem(
             barButtonSystemItem: .add,
             target: self,
             action: #selector(addButtonPressed)
         )
-        addButton.tintColor = .systemPink.withAlphaComponent(0.5)
-        navigationItem.rightBarButtonItem = addButton
         
+        learnButton.tintColor = .systemPink.withAlphaComponent(0.5)
+        addButton.tintColor = .systemPink.withAlphaComponent(0.5)
+        
+        navigationItem.leftBarButtonItem = learnButton
+        navigationItem.rightBarButtonItem = addButton
+    }
+    
+    @objc private func startButtonPressed() {
+        let cardsVC = CardsViewController()
+        navigationController?.pushViewController(cardsVC, animated: true)
     }
     
     @objc private func addButtonPressed() {
-        print("newWord")
+        showAlert()
     }
     
+    private func fetchData() {
+        CoreDataManager.shared.fetchData { [unowned self] result in
+            switch result {
+            case .success(let words):
+                self.myWords = words
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    private func save(wordName: String, translation: String) {
+        CoreDataManager.shared.create(wordName, translation: translation) { [unowned self] word in
+            myWords.append(word)
+            wordsCollectionView.insertItems(at: [IndexPath(item: myWords.count - 1, section: 0)])
+        }
+    }
+    
+    private func delete(word: Word) {
+        CoreDataManager.shared.delete(word)
+    }
+
     private func setLayout() {
-        view.addSubview(wordsCollectionView)
         view.addSubview(menuBarCollectionView)
-        view.addSubview(bottomView)
-        bottomView.addSubview(addButton)
+        view.addSubview(wordsCollectionView)
         
         guard let navBarHeight = navigationController?.navigationBar.frame.minY  else { return }
         
@@ -110,17 +116,7 @@ final class MainViewController: UIViewController {
             wordsCollectionView.topAnchor.constraint(equalTo: menuBarCollectionView.bottomAnchor),
             wordsCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             wordsCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            wordsCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
-            bottomView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            bottomView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            bottomView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1/10),
-            
-            addButton.centerXAnchor.constraint(equalTo: bottomView.centerXAnchor),
-            addButton.centerYAnchor.constraint(equalTo: bottomView.topAnchor),
-            addButton.heightAnchor.constraint(equalToConstant: 70),
-            addButton.widthAnchor.constraint(equalToConstant: 70)
+            wordsCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
 }
@@ -137,26 +133,41 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == wordsCollectionView {
             guard let cell = wordsCollectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
-            let word = filteredWords[indexPath.item].name
-            cell.configure(text: word)
+            let word = filteredWords[indexPath.item]
+            let name = word.name ?? ""
+            let translation = word.translation ?? ""
+            cell.configure(word: name, translation: translation)
+            cell.deleteAction = { [weak self] in
+                guard let word = self?.myWords.remove(at: indexPath.item) else { return }
+                self?.wordsCollectionView.deleteItems(at: [indexPath])
+                CoreDataManager.shared.delete(word)
+            }
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCell.cellID, for: indexPath) as? MenuCell else { return UICollectionViewCell() }
-            cell.configure(text: categories[indexPath.item].name)
+            cell.configure(text: categories[indexPath.item])
             return cell
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == menuBarCollectionView {
-            let category = categories[indexPath.item].name
             switch indexPath.item {
             case 0:
                 filteredWords = allWords
                 wordsCollectionView.reloadData()
-            default:
-                filteredWords = allWords.filter {$0.category.name == category}
+            case 1:
+                filteredWords = myWords
                 wordsCollectionView.reloadData()
+            default:
+                filteredWords = dictionaryWords
+                wordsCollectionView.reloadData()
+            }
+        } else {
+            collectionView.deleteItems(at: [indexPath])
+            let word = myWords[indexPath.item]
+            showAlert(word: word) {
+                collectionView.reloadItems(at: [indexPath])
             }
         }
     }
@@ -171,15 +182,22 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
         }
     }
 }
-//MARK: - UImage().resize
-extension UIImage {
-    func resize(targetSize: CGSize) -> UIImage {
-        return UIGraphicsImageRenderer(size: targetSize).image { _ in
-            self.draw(in: CGRect(origin: .zero, size: targetSize))
+// MARK: - Alert Controller
+extension MainViewController {
+    
+    private func showAlert(word: Word? = nil, completion: (() -> Void)? = nil) {
+        let title = word != nil ? "Update Word" : "New Word"
+        let alert = UIAlertController.createAlertController(withTitle: title)
+        
+        alert.action(word: word) { [weak self] wordName, translationName  in
+            if let word = word, let completion = completion {
+                CoreDataManager.shared.update(word, newName: wordName, newTranslation: translationName)
+                completion()
+            } else {
+                self?.save(wordName: wordName, translation: translationName)
+            }
         }
+        present(alert, animated: true)
     }
 }
-
-
-
 

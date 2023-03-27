@@ -14,9 +14,6 @@ final class MenuCell: UICollectionViewCell {
     private let label: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.layer.borderWidth = 3
-        label.layer.borderColor = UIColor.white.cgColor
-        label.layer.cornerRadius = 32
         label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 20, weight: .heavy)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -40,17 +37,15 @@ final class MenuCell: UICollectionViewCell {
             label.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
             label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
             label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
-            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
         ])
     }
     
     override var isSelected: Bool {
         didSet {
-            label.layer.borderColor = isSelected
-            ? UIColor.systemPink.withAlphaComponent(0.5).cgColor
-            : UIColor.white.cgColor
-        
-            
+            label.textColor = isSelected
+            ? .systemPink.withAlphaComponent(0.5)
+            : .black
         }
     }
     
