@@ -34,16 +34,23 @@ final class MainViewController: UIViewController {
         fetchData()
         filteredWords = allWords
         collectionView.collectionViewLayout = createLayout()
+        setCellSelected() 
         setNavigationBar()
         setLayout()
         collectionView.delegate = self
         collectionView.dataSource = self
     }
     
+    private func setCellSelected() {
+        let itemIndex = IndexPath(item: 0, section: 0)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCell.cellID, for: itemIndex) as? MenuCell else { return }
+        cell.isSelected = true
+    }
+    
     private func createLayout() -> UICollectionViewCompositionalLayout {
         UICollectionViewCompositionalLayout { sectionindex, _ in
-            let section = TemporaryData.sectionTitles[sectionindex]
-            switch section {
+            
+            switch sectionindex {
             case 0:
                 let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
                 
@@ -115,7 +122,7 @@ final class MainViewController: UIViewController {
     }
     
     @objc private func startButtonPressed() {
-        let cardsVC = CardsViewController()
+        let cardsVC = TestViewController()
         navigationController?.pushViewController(cardsVC, animated: true)
     }
     
@@ -157,7 +164,7 @@ final class MainViewController: UIViewController {
         ])
     }
 }
-//MARK: - UICollectionViewDelegate
+//MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -203,18 +210,33 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let sectionIndex = indexPath.section
+        
+        if sectionIndex == 0 {
+            switch indexPath.item {
+            case 0:
+                filteredWords = allWords
+                collectionView.reloadData()
+            case 1:
+                filteredWords = myWords
+                collectionView.reloadData()
+            default:
+                filteredWords = dictionaryWords
+                collectionView.reloadData()
+            }
+        }
         //        if collectionView == menuBarCollectionView {
-        //            switch indexPath.item {
-        //            case 0:
-        //                filteredWords = allWords
-        //                collectionView.reloadData()
-        //            case 1:
-        //                filteredWords = myWords
-        //                collectionView.reloadData()
-        //            default:
-        //                filteredWords = dictionaryWords
-        //                collectionView.reloadData()
-        //            }
+//                    switch indexPath.item {
+//                    case 0:
+//                        filteredWords = allWords
+//                        collectionView.reloadData()
+//                    case 1:
+//                        filteredWords = myWords
+//                        collectionView.reloadData()
+//                    default:
+//                        filteredWords = dictionaryWords
+//                        collectionView.reloadData()
+//                    }
         //        } else {
         //            collectionView.deleteItems(at: [indexPath])
         //            let word = myWords[indexPath.item]
@@ -225,14 +247,10 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     private func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: IndexPath) -> UICollectionReusableView {
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionReusableView.reuseIdentifier, for: indexPath) as? HeaderCollectionReusableView else { return UICollectionReusableView() }
-            header.configure(title: TemporaryData.sectionTitles[indexPath.section])
-            return header
-        default:
-            return UICollectionReusableView()
-        }
+        guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionReusableView.reuseIdentifier, for: indexPath) as? HeaderCollectionReusableView else { return UICollectionReusableView() }
+        let title = TemporaryData.sectionTitles[indexPath.section]
+        header.configure(title: title)
+        return header
     }
 }
 // MARK: - Alert Controller

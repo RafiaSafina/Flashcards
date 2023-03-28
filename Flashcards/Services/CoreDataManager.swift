@@ -7,11 +7,10 @@
 
 import CoreData
 
-class CoreDataManager {
+final class CoreDataManager {
 
     static let shared = CoreDataManager()
     
-        
     // MARK: - Core Data stack
     private let persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "WordModel")
@@ -53,6 +52,11 @@ class CoreDataManager {
     func update(_ word: Word, newName: String, newTranslation: String) {
         word.name = newName
         word.translation = newTranslation
+        saveContext()
+    }
+    
+    func updateStatus(_ word: Word, isLearnt: Bool) {
+        word.isLearnt = isLearnt
         saveContext()
     }
     

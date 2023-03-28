@@ -10,5 +10,4 @@ import Foundation
 class TemporaryData {
     static var categories = ["all words", "my words", "dictionary"]
     static var sectionTitles = ["", "learn words", "all words" ]
-
 }

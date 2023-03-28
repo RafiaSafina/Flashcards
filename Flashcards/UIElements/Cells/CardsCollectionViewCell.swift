@@ -11,14 +11,31 @@ final class CardsCollectionViewCell: UICollectionViewCell {
     
     static let cellID = "cardsCellID"
     
-    private var isFlipped = false
+    private var isFlipped = true
+    
+    var turnOffTap: (() -> ())?
+    
+    private lazy var singleTapGesture: UITapGestureRecognizer = {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(flip))
+        tap.numberOfTapsRequired = 1
+        return tap
+    }()
+    
+    private lazy var leftSwipeGesture: UISwipeGestureRecognizer = {
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(swipeLeft))
+        swipe.direction = .left
+        return swipe
+    }()
+    
+    private lazy var rightSwipeGesture: UISwipeGestureRecognizer = {
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(swipeRight))
+        swipe.direction = .right
+        return swipe
+    }()
     
     private lazy var frontCellView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        let singleTap = UITapGestureRecognizer(target: self, action: #selector(flip))
-        singleTap.numberOfTapsRequired = 1
-        view.addGestureRecognizer(singleTap)
         view.layer.shadowColor = UIColor.gray.cgColor
         view.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
         view.layer.shadowOpacity = 1.0
@@ -31,9 +48,6 @@ final class CardsCollectionViewCell: UICollectionViewCell {
     private lazy var backCellView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        let singleTap = UITapGestureRecognizer(target: self, action: #selector(flip))
-        singleTap.numberOfTapsRequired = 1
-        view.addGestureRecognizer(singleTap)
         view.isHidden = true
         view.layer.shadowColor = UIColor.gray.cgColor
         view.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
@@ -67,13 +81,29 @@ final class CardsCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.backgroundColor = .white
+        contentView.addGestureRecognizer(singleTapGesture)
+        contentView.addGestureRecognizer(leftSwipeGesture)
+        contentView.addGestureRecognizer(rightSwipeGesture)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    @objc func flip() {
+    @objc private func swipeLeft() {
+        var frame = contentView.frame
+        frame.origin.x += 500.0
+
+        UIView.animate(withDuration: 0.25) { [unowned self] in
+            self.contentView.frame = frame
+        }
+    }
+    
+    @objc private func swipeRight() {
+        
+    }
+    
+    @objc private func flip() {
         UIView.transition(with: contentView, duration: 1.0, options: isFlipped ? .transitionFlipFromBottom : .transitionFlipFromTop, animations:  { [unowned self] in
             frontCellView.isHidden = !frontCellView.isHidden
             backCellView.isHidden = !backCellView.isHidden
@@ -81,9 +111,19 @@ final class CardsCollectionViewCell: UICollectionViewCell {
         isFlipped = !isFlipped
     }
     
-    func configure(name: String, translation: String) {
+    func configure(name: String, translation: String, isSwiped: Bool? = nil) {
         wordLabel.text = name
         translationLabel.text = translation
+        
+        guard let isSwiped = isSwiped else { return }
+        
+        if isSwiped {
+            contentView.removeGestureRecognizer(singleTapGesture)
+        }
+    }
+    
+    func removeSingleTap() {
+        contentView.removeGestureRecognizer(singleTapGesture)
     }
     
     override func layoutSubviews() {
