@@ -21,6 +21,7 @@
 		6C214A6529CFB53F00540AF6 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A6429CFB53F00540AF6 /* Alert.swift */; };
 		6C214A6729CFF4A000540AF6 /* CardsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A6629CFF4A000540AF6 /* CardsViewController.swift */; };
 		6C214A6B29CFF8C700540AF6 /* CardsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A6A29CFF8C700540AF6 /* CardsCollectionViewCell.swift */; };
+		6C214A6F29D2669000540AF6 /* HeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A6E29D2669000540AF6 /* HeaderCollectionReusableView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		6C214A6429CFB53F00540AF6 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		6C214A6629CFF4A000540AF6 /* CardsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsViewController.swift; sourceTree = "<group>"; };
 		6C214A6A29CFF8C700540AF6 /* CardsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsCollectionViewCell.swift; sourceTree = "<group>"; };
+		6C214A6E29D2669000540AF6 /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,9 +87,10 @@
 		6C214A4729C6905100540AF6 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				6C214A3929C28EEE00540AF6 /* MenuCell.swift */,
 				6C214A3529BEFBA400540AF6 /* MainCollectionViewCell.swift */,
+				6C214A3929C28EEE00540AF6 /* MenuCell.swift */,
 				6C214A6A29CFF8C700540AF6 /* CardsCollectionViewCell.swift */,
+				6C214A6E29D2669000540AF6 /* HeaderCollectionReusableView.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -214,6 +217,7 @@
 				6C214A2029BEA65E00540AF6 /* MainViewController.swift in Sources */,
 				6C214A4629C689C300540AF6 /* WordsCollectionView.swift in Sources */,
 				6C214A1C29BEA65E00540AF6 /* AppDelegate.swift in Sources */,
+				6C214A6F29D2669000540AF6 /* HeaderCollectionReusableView.swift in Sources */,
 				6C214A3629BEFBA400540AF6 /* MainCollectionViewCell.swift in Sources */,
 				6C214A1E29BEA65E00540AF6 /* SceneDelegate.swift in Sources */,
 				6C214A6729CFF4A000540AF6 /* CardsViewController.swift in Sources */,

@@ -15,7 +15,6 @@ class CardsViewController: UIViewController {
     private let horintalCardsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 40
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(CardsCollectionViewCell.self, forCellWithReuseIdentifier: CardsCollectionViewCell.cellID)
         collectionView.backgroundColor = .white

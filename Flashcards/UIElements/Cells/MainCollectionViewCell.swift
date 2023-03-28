@@ -21,18 +21,18 @@ final class MainCollectionViewCell: UICollectionViewCell {
     private var cellView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        view.layer.shadowColor = UIColor.gray.cgColor
+        view.layer.shadowColor = UIColor.lightGray.cgColor
         view.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
         view.layer.shadowOpacity = 1.0
         view.layer.masksToBounds = false
-        view.layer.cornerRadius = 2.0
+        view.layer.cornerRadius = 10.0
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     private let wordLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -62,7 +62,6 @@ final class MainCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-       
     }
     
     required init?(coder: NSCoder) {
@@ -91,13 +90,12 @@ final class MainCollectionViewCell: UICollectionViewCell {
             cellView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             cellView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             cellView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            cellView.heightAnchor.constraint(equalToConstant: 120),
             
             wordLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
             wordLabel.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -10),
-            wordLabel.topAnchor.constraint(equalTo: cellView.topAnchor, constant: 20),
+            wordLabel.topAnchor.constraint(equalTo: cellView.topAnchor, constant: 8),
             
-            translationLabel.topAnchor.constraint(equalTo: wordLabel.bottomAnchor, constant: 20),
+            translationLabel.topAnchor.constraint(equalTo: wordLabel.bottomAnchor, constant: 10),
             translationLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
             translationLabel.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -10),
             

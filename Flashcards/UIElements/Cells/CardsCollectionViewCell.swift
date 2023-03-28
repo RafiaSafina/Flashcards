@@ -23,7 +23,7 @@ final class CardsCollectionViewCell: UICollectionViewCell {
         view.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
         view.layer.shadowOpacity = 1.0
         view.layer.masksToBounds = false
-        view.layer.cornerRadius = 2.0
+        view.layer.cornerRadius = 10.0
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -39,7 +39,7 @@ final class CardsCollectionViewCell: UICollectionViewCell {
         view.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
         view.layer.shadowOpacity = 1.0
         view.layer.masksToBounds = false
-        view.layer.cornerRadius = 2.0
+        view.layer.cornerRadius = 10.0
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -78,7 +78,6 @@ final class CardsCollectionViewCell: UICollectionViewCell {
             frontCellView.isHidden = !frontCellView.isHidden
             backCellView.isHidden = !backCellView.isHidden
         })
-        
         isFlipped = !isFlipped
     }
     
@@ -99,13 +98,11 @@ final class CardsCollectionViewCell: UICollectionViewCell {
             frontCellView.leadingAnchor.constraint(equalTo: leadingAnchor),
             frontCellView.trailingAnchor.constraint(equalTo: trailingAnchor),
             frontCellView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
-//            frontCellView.heightAnchor.constraint(equalToConstant: 160),
             
             backCellView.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             backCellView.leadingAnchor.constraint(equalTo: leadingAnchor),
             backCellView.trailingAnchor.constraint(equalTo: trailingAnchor),
             backCellView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
-//            backCellView.heightAnchor.constraint(equalToConstant: 160),
             
             translationLabel.centerXAnchor.constraint(equalTo: backCellView.centerXAnchor),
             translationLabel.centerYAnchor.constraint(equalTo: backCellView.centerYAnchor),

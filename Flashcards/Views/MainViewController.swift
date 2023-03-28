@@ -15,41 +15,85 @@ final class MainViewController: UIViewController {
     private var dictionaryWords: [Word] = []
     private var filteredWords: [Word] = []
     private lazy var allWords: [Word] = myWords
-
-    private let menuBarCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumInteritemSpacing = 0
+    
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .systemBlue
-        collectionView.register(MenuCell.self, forCellWithReuseIdentifier: MenuCell.cellID)
+        collectionView.backgroundColor = .white
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.register(MainCollectionViewCell.self, forCellWithReuseIdentifier: MainCollectionViewCell.reuseIdentifier)
+        collectionView.register(CardsCollectionViewCell.self, forCellWithReuseIdentifier: CardsCollectionViewCell.cellID)
+        collectionView.register(MenuCell.self, forCellWithReuseIdentifier: MenuCell.cellID)
+        collectionView.register(HeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionReusableView.reuseIdentifier)
         return collectionView
     }()
-    
-    private let wordsCollectionView = WordsCollectionView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         fetchData()
         filteredWords = allWords
+        collectionView.collectionViewLayout = createLayout()
         setNavigationBar()
         setLayout()
-        wordsCollectionView.delegate = self
-        wordsCollectionView.dataSource = self
-        menuBarCollectionView.delegate = self
-        menuBarCollectionView.dataSource = self
-        menuBarCollectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: true, scrollPosition: .left)
+        collectionView.delegate = self
+        collectionView.dataSource = self
     }
+    
+    private func createLayout() -> UICollectionViewCompositionalLayout {
+        UICollectionViewCompositionalLayout { sectionindex, _ in
+            let section = TemporaryData.sectionTitles[sectionindex]
+            switch section {
+            case 0:
+                let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
+                
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .absolute((self.view.frame.width / 3) - 10), heightDimension: .absolute(50)), subitems: [item])
+                
+                let section = NSCollectionLayoutSection(group: group)
+                section.orthogonalScrollingBehavior = .continuous
+                section.interGroupSpacing = 10
+                section.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+                section.supplementariesFollowContentInsets = false
+                return section
+            case 1:
+                let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
+                
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .absolute(self.view.frame.width - 70), heightDimension: .absolute(self.view.frame.width - 120)), subitems: [item])
+                let section = NSCollectionLayoutSection(group: group)
+                section.orthogonalScrollingBehavior = .groupPagingCentered
+                section.interGroupSpacing = 10
+                section.contentInsets = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
+                section.boundarySupplementaryItems = [self.supplementaryHeaderItem()]
+                section.supplementariesFollowContentInsets = false
+                return section
+            default:
+                let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
+                
+                let group = NSCollectionLayoutGroup.vertical(layoutSize: .init(widthDimension: .absolute(self.view.frame.width - 70), heightDimension: .absolute(80)), subitems: [item])
+                
+                let section = NSCollectionLayoutSection(group: group)
+                section.orthogonalScrollingBehavior = .groupPagingCentered
+                section.interGroupSpacing = 10
+                section.contentInsets = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
+                section.boundarySupplementaryItems = [self.supplementaryHeaderItem()]
+                section.supplementariesFollowContentInsets = false
+                return section
+            }
+        }
+    }
+    
+    private func supplementaryHeaderItem() -> NSCollectionLayoutBoundarySupplementaryItem {
+            .init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+        }
     
     private func setNavigationBar() {
         let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.systemPink.withAlphaComponent(0.5)]
         navBarAppearance.backgroundColor = .white
         
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
-
+        
         let learnButton = UIBarButtonItem(
             title: "Learn",
             style: .plain,
@@ -93,7 +137,8 @@ final class MainViewController: UIViewController {
     private func save(wordName: String, translation: String) {
         CoreDataManager.shared.create(wordName, translation: translation) { [unowned self] word in
             myWords.append(word)
-            wordsCollectionView.insertItems(at: [IndexPath(item: myWords.count - 1, section: 0)])
+            filteredWords.append(word)
+            collectionView.insertItems(at: [IndexPath(item: filteredWords.count - 1, section: 0)])
         }
     }
     
@@ -102,83 +147,91 @@ final class MainViewController: UIViewController {
     }
 
     private func setLayout() {
-        view.addSubview(menuBarCollectionView)
-        view.addSubview(wordsCollectionView)
-        
-        guard let navBarHeight = navigationController?.navigationBar.frame.minY  else { return }
+        view.addSubview(collectionView)
         
         NSLayoutConstraint.activate([
-            menuBarCollectionView.topAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor, constant: navBarHeight),
-            menuBarCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            menuBarCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            menuBarCollectionView.heightAnchor.constraint(equalToConstant: 60),
-            
-            wordsCollectionView.topAnchor.constraint(equalTo: menuBarCollectionView.bottomAnchor),
-            wordsCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            wordsCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            wordsCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }
 //MARK: - UICollectionViewDelegate
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        TemporaryData.categories.count
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == wordsCollectionView {
-            return filteredWords.count
-        } else {
+        switch section {
+        case 0:
             return categories.count
+        case 1:
+            return filteredWords.count
+        default:
+            return filteredWords.count
         }
     }
     
     internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == wordsCollectionView {
-            guard let cell = wordsCollectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
+        switch indexPath.section {
+        case 0:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCell.cellID, for: indexPath) as? MenuCell else { return UICollectionViewCell() }
+            cell.configure(text: categories[indexPath.item])
+            return cell
+        case 1:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CardsCollectionViewCell.cellID, for: indexPath) as? CardsCollectionViewCell else { return UICollectionViewCell() }
+            guard let name = myWords[indexPath.item].name else { return UICollectionViewCell() }
+            guard let translation = myWords[indexPath.item].translation else { return UICollectionViewCell() }
+            cell.configure(name: name, translation: translation)
+            return cell
+        default:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
             let word = filteredWords[indexPath.item]
             let name = word.name ?? ""
             let translation = word.translation ?? ""
             cell.configure(word: name, translation: translation)
             cell.deleteAction = { [weak self] in
-                guard let word = self?.myWords.remove(at: indexPath.item) else { return }
-                self?.wordsCollectionView.deleteItems(at: [indexPath])
+                guard let word = self?.filteredWords.remove(at: indexPath.item) else { return }
                 CoreDataManager.shared.delete(word)
+                self?.collectionView.deleteItems(at: [indexPath])
             }
-            return cell
-        } else {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCell.cellID, for: indexPath) as? MenuCell else { return UICollectionViewCell() }
-            cell.configure(text: categories[indexPath.item])
             return cell
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == menuBarCollectionView {
-            switch indexPath.item {
-            case 0:
-                filteredWords = allWords
-                wordsCollectionView.reloadData()
-            case 1:
-                filteredWords = myWords
-                wordsCollectionView.reloadData()
-            default:
-                filteredWords = dictionaryWords
-                wordsCollectionView.reloadData()
-            }
-        } else {
-            collectionView.deleteItems(at: [indexPath])
-            let word = myWords[indexPath.item]
-            showAlert(word: word) {
-                collectionView.reloadItems(at: [indexPath])
-            }
-        }
+        //        if collectionView == menuBarCollectionView {
+        //            switch indexPath.item {
+        //            case 0:
+        //                filteredWords = allWords
+        //                collectionView.reloadData()
+        //            case 1:
+        //                filteredWords = myWords
+        //                collectionView.reloadData()
+        //            default:
+        //                filteredWords = dictionaryWords
+        //                collectionView.reloadData()
+        //            }
+        //        } else {
+        //            collectionView.deleteItems(at: [indexPath])
+        //            let word = myWords[indexPath.item]
+        //            showAlert(word: word) {
+        //                collectionView.reloadItems(at: [indexPath])
+        //            }
+        //        }
     }
-}
-//MARK: - UICollectionViewDelegateFlowLayout
-extension MainViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayaut: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView == wordsCollectionView {
-            return CGSize(width: UIScreen.main.bounds.width - 30, height: 120)
-        } else {
-            return CGSize(width: UIScreen.main.bounds.width / 3, height: 60)
+    
+    private func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionReusableView.reuseIdentifier, for: indexPath) as? HeaderCollectionReusableView else { return UICollectionReusableView() }
+            header.configure(title: TemporaryData.sectionTitles[indexPath.section])
+            return header
+        default:
+            return UICollectionReusableView()
         }
     }
 }
