@@ -23,6 +23,19 @@ class TestViewController: UIViewController {
         1
     }
     
+    private lazy var cardView: CardView = {
+        let view = CardView()
+        view.configure(name: filteredWords[0].name!,
+                           translation: filteredWords[0].translation!)
+        view.addGestureRecognizer(panGesture)
+        return view
+    }()
+    
+    private lazy var panGesture: UIPanGestureRecognizer = {
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+        return pan
+    }()
+    
     private lazy var countLabel: UILabel = {
         let label = UILabel()
         label.text = "\(previousWordsCount)/\(filteredWords.count)"
@@ -30,16 +43,6 @@ class TestViewController: UIViewController {
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
-    }()
-    
-    private lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
-//        collectionView.isScrollEnabled = .
-        collectionView.register(CardsCollectionViewCell.self, forCellWithReuseIdentifier: CardsCollectionViewCell.cellID)
-        collectionView.backgroundColor = .white
-        collectionView.isScrollEnabled = false
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        return collectionView
     }()
     
     private lazy var leftButton: UIButton = {
@@ -70,8 +73,33 @@ class TestViewController: UIViewController {
         fetchData()
         filteredWords = myWords
         setupLayout()
-        collectionView.delegate = self
-        collectionView.dataSource = self
+    }
+    
+    
+    @objc private func didPan() {
+        guard let card = panGesture.view else { return }
+        let point = panGesture.translation(in: view)
+        card.center = CGPoint(x: view.center.x + point.x, y: view.center.y + point.y)
+        
+        let linePosition = view.frame.width / 3
+        
+        if panGesture.state == .ended {
+            
+            if card.center.x < linePosition {
+                UIView.animate(withDuration: 0.3) {
+                    card.center = CGPoint(x: card.center.x -  self.view.frame.maxX, y: card.center.y)
+                }
+                return
+            } else if card.center.x > linePosition {
+                UIView.animate(withDuration: 0.3) {
+                    card.center = CGPoint(x: card.center.x +  self.view.frame.maxX , y: card.center.y)
+                }
+                return
+            }
+            UIView.animate(withDuration: 0.2) { [unowned self] in
+                card.center = self.view.center
+            }
+        }
     }
     
     private func createLayout() -> UICollectionViewCompositionalLayout {
@@ -99,11 +127,15 @@ class TestViewController: UIViewController {
     }
     
     @objc private func leftButtonTapped() {
-        print("left")
+        UIView.animate(withDuration: 0.3) {
+            self.cardView.center = CGPoint(x: self.cardView.center.x - self.view.frame.maxX , y: self.cardView.center.y)
+        }
     }
     
     @objc private func rightButtonTapped() {
-        print("right")
+        UIView.animate(withDuration: 0.3) {
+            self.cardView.center = CGPoint(x: self.cardView.center.x + self.view.frame.maxX , y: self.cardView.center.y)
+        }
     }
     
     private func fetchData() {
@@ -118,7 +150,7 @@ class TestViewController: UIViewController {
     }
     
     private func setupLayout() {
-        view.addSubview(collectionView)
+        view.addSubview(cardView)
         view.addSubview(leftButton)
         view.addSubview(rightButton)
         view.addSubview(countLabel)
@@ -127,40 +159,19 @@ class TestViewController: UIViewController {
             countLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             countLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            collectionView.topAnchor.constraint(equalTo: countLabel.bottomAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+            cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            cardView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            cardView.widthAnchor.constraint(equalToConstant: view.frame.size.width - 60),
+            cardView.heightAnchor.constraint(equalToConstant: view.frame.size.height - 260),
             
-            leftButton.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 20),
+            leftButton.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 20),
             leftButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             leftButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             
-            rightButton.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 20),
+            rightButton.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 20),
             rightButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
             rightButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
         ])
     }
-}
-
-//MARK: - UICollectionViewDelegate, UICollectionViewDataSource
-extension TestViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        filteredWords.count
-    }
-    
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CardsCollectionViewCell.cellID, for: indexPath) as? CardsCollectionViewCell else { return UICollectionViewCell() }
-        guard let name = filteredWords[indexPath.item].name else { return UICollectionViewCell() }
-        guard let translation = filteredWords[indexPath.item].translation else { return UICollectionViewCell() }
-        cell.configure(name: name, translation: translation, isSwiped: isSwiped)
-        return cell
-    }
-}
-//MARK: - UICollectionViewFlowLayout
-extension TestViewController: UICollectionViewDelegateFlowLayout {
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: view.frame.width - 40, height: 600)
-//    }
 }
 

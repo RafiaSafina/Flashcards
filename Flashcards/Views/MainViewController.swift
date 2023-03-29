@@ -16,6 +16,8 @@ final class MainViewController: UIViewController {
     private var filteredWords: [Word] = []
     private lazy var allWords: [Word] = myWords
     
+    private var isFlipped = true
+    
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
