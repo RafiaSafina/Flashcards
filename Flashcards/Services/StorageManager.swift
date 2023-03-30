@@ -7,9 +7,9 @@
 
 import CoreData
 
-final class CoreDataManager {
+final class StorageManager {
 
-    static let shared = CoreDataManager()
+    static let shared = StorageManager()
     
     // MARK: - Core Data stack
     private let persistentContainer: NSPersistentContainer = {

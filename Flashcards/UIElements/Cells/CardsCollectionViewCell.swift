@@ -63,6 +63,8 @@ final class CardsCollectionViewCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
+//    private editButton
 
     override init(frame: CGRect) {
         super.init(frame: frame)
