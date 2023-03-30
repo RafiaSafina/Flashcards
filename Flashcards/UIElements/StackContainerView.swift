@@ -7,10 +7,15 @@
 
 import UIKit
 
+protocol SwipeCardsDelegate: AnyObject {
+    func swipeDidEnd(on view: CardView)
+    func updateWordStatus(word: Word, isLearnt: Bool)
+}
+
 class StackContainerView: UIView {
     
     private var numberOfCardsToShow = 0
-    private var numberOfVisibleCards = 3
+    private var numberOfVisibleCards = 2
     private var cardViews: [CardView] = []
     private var remainingCards = 0
     
@@ -29,6 +34,8 @@ class StackContainerView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = .white
+        translatesAutoresizingMaskIntoConstraints = false
     }
     
     required init?(coder: NSCoder) {
@@ -84,7 +91,7 @@ extension StackContainerView: SwipeCardsDelegate {
         
         if remainingCards > 0 {
             let newIndex = dataSource.numberOfCardsToShow() - remainingCards
-            addCardView(cardView: dataSource.showCard(at: newIndex), atIndex: 2)
+            addCardView(cardView: dataSource.showCard(at: newIndex), atIndex: 1)
             
             for (cardIndex, cardView) in visibleCards.reversed().enumerated() {
                 UIView.animate(withDuration: 0.2) {
@@ -94,5 +101,9 @@ extension StackContainerView: SwipeCardsDelegate {
                 }
             }
         }
+    }
+    
+    func updateWordStatus(word: Word, isLearnt: Bool) {
+        dataSource?.update(word: word, isLearnt: isLearnt)
     }
 }

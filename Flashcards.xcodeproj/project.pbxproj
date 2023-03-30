@@ -17,12 +17,15 @@
 		6C214A4D29CD479200540AF6 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A4C29CD479200540AF6 /* StorageManager.swift */; };
 		6C214A6029CEEB9000540AF6 /* TemporaryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A5F29CEEB9000540AF6 /* TemporaryData.swift */; };
 		6C214A6329CFA63300540AF6 /* WordModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A6129CFA63300540AF6 /* WordModel.xcdatamodeld */; };
-		6C214A6529CFB53F00540AF6 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A6429CFB53F00540AF6 /* Alert.swift */; };
+		6C214A6529CFB53F00540AF6 /* Alert Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A6429CFB53F00540AF6 /* Alert Extension.swift */; };
 		6C214A6729CFF4A000540AF6 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A6629CFF4A000540AF6 /* TestViewController.swift */; };
 		6C214A6B29CFF8C700540AF6 /* CardsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A6A29CFF8C700540AF6 /* CardsCollectionViewCell.swift */; };
 		6C214A6F29D2669000540AF6 /* HeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A6E29D2669000540AF6 /* HeaderCollectionReusableView.swift */; };
 		6C214A7129D3807600540AF6 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7029D3807600540AF6 /* CardView.swift */; };
 		6C214A7729D51D2A00540AF6 /* StackContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7629D51D2A00540AF6 /* StackContainerView.swift */; };
+		6C214A7929D62CCF00540AF6 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7829D62CCF00540AF6 /* Extension.swift */; };
+		6C214A7B29D63B3900540AF6 /* Base UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7A29D63B3900540AF6 /* Base UI.swift */; };
+		6C214A7E29D6567200540AF6 /* MenuTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7D29D6567200540AF6 /* MenuTopBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,12 +41,15 @@
 		6C214A4C29CD479200540AF6 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		6C214A5F29CEEB9000540AF6 /* TemporaryData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryData.swift; sourceTree = "<group>"; };
 		6C214A6229CFA63300540AF6 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
-		6C214A6429CFB53F00540AF6 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
+		6C214A6429CFB53F00540AF6 /* Alert Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Alert Extension.swift"; sourceTree = "<group>"; };
 		6C214A6629CFF4A000540AF6 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		6C214A6A29CFF8C700540AF6 /* CardsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsCollectionViewCell.swift; sourceTree = "<group>"; };
 		6C214A6E29D2669000540AF6 /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		6C214A7029D3807600540AF6 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		6C214A7629D51D2A00540AF6 /* StackContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackContainerView.swift; sourceTree = "<group>"; };
+		6C214A7829D62CCF00540AF6 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		6C214A7A29D63B3900540AF6 /* Base UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Base UI.swift"; sourceTree = "<group>"; };
+		6C214A7D29D6567200540AF6 /* MenuTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuTopBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				6C214A1A29BEA65E00540AF6 /* Flashcards */,
+				6C214A5F29CEEB9000540AF6 /* TemporaryData.swift */,
 				6C214A1929BEA65E00540AF6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -76,12 +83,13 @@
 		6C214A1A29BEA65E00540AF6 /* Flashcards */ = {
 			isa = PBXGroup;
 			children = (
+				6C214A6D29D13D6A00540AF6 /* App */,
 				6C214A6C29D13D4F00540AF6 /* Models */,
 				6C214A5E29CEE81400540AF6 /* Services */,
-				6C214A4929C6907300540AF6 /* Views */,
+				6C214A4929C6907300540AF6 /* ViewControllers */,
+				6C214A4729C6905100540AF6 /* Cells */,
 				6C214A4829C6906200540AF6 /* UIElements */,
-				6C214A6D29D13D6A00540AF6 /* App */,
-				6C214A5F29CEEB9000540AF6 /* TemporaryData.swift */,
+				6C214A7C29D63BBF00540AF6 /* Extensions */,
 			);
 			path = Flashcards;
 			sourceTree = "<group>";
@@ -99,22 +107,22 @@
 		6C214A4829C6906200540AF6 /* UIElements */ = {
 			isa = PBXGroup;
 			children = (
-				6C214A4729C6905100540AF6 /* Cells */,
-				6C214A6429CFB53F00540AF6 /* Alert.swift */,
 				6C214A6E29D2669000540AF6 /* HeaderCollectionReusableView.swift */,
 				6C214A7029D3807600540AF6 /* CardView.swift */,
 				6C214A7629D51D2A00540AF6 /* StackContainerView.swift */,
+				6C214A7A29D63B3900540AF6 /* Base UI.swift */,
+				6C214A7D29D6567200540AF6 /* MenuTopBar.swift */,
 			);
 			path = UIElements;
 			sourceTree = "<group>";
 		};
-		6C214A4929C6907300540AF6 /* Views */ = {
+		6C214A4929C6907300540AF6 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
 				6C214A1F29BEA65E00540AF6 /* MainViewController.swift */,
 				6C214A6629CFF4A000540AF6 /* TestViewController.swift */,
 			);
-			path = Views;
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		6C214A5E29CEE81400540AF6 /* Services */ = {
@@ -143,6 +151,15 @@
 				6C214A2629BEA65F00540AF6 /* LaunchScreen.storyboard */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		6C214A7C29D63BBF00540AF6 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6C214A7829D62CCF00540AF6 /* Extension.swift */,
+				6C214A6429CFB53F00540AF6 /* Alert Extension.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -216,6 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6C214A3A29C28EEE00540AF6 /* MenuCell.swift in Sources */,
+				6C214A7B29D63B3900540AF6 /* Base UI.swift in Sources */,
 				6C214A6029CEEB9000540AF6 /* TemporaryData.swift in Sources */,
 				6C214A2029BEA65E00540AF6 /* MainViewController.swift in Sources */,
 				6C214A1C29BEA65E00540AF6 /* AppDelegate.swift in Sources */,
@@ -224,9 +242,11 @@
 				6C214A1E29BEA65E00540AF6 /* SceneDelegate.swift in Sources */,
 				6C214A6729CFF4A000540AF6 /* TestViewController.swift in Sources */,
 				6C214A6B29CFF8C700540AF6 /* CardsCollectionViewCell.swift in Sources */,
+				6C214A7E29D6567200540AF6 /* MenuTopBar.swift in Sources */,
 				6C214A6329CFA63300540AF6 /* WordModel.xcdatamodeld in Sources */,
-				6C214A6529CFB53F00540AF6 /* Alert.swift in Sources */,
+				6C214A6529CFB53F00540AF6 /* Alert Extension.swift in Sources */,
 				6C214A7129D3807600540AF6 /* CardView.swift in Sources */,
+				6C214A7929D62CCF00540AF6 /* Extension.swift in Sources */,
 				6C214A7729D51D2A00540AF6 /* StackContainerView.swift in Sources */,
 				6C214A4D29CD479200540AF6 /* StorageManager.swift in Sources */,
 			);

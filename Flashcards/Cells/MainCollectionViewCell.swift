@@ -18,35 +18,10 @@ final class MainCollectionViewCell: UICollectionViewCell {
     
     var deleteAction: (() -> ())?
     
-    private var cellView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.shadowColor = UIColor.lightGray.cgColor
-        view.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
-        view.layer.shadowOpacity = 1.0
-        view.layer.masksToBounds = false
-        view.layer.cornerRadius = 10.0
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    private var cellView = FrontView()
     
-    private let wordLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        label.textColor = .black
-        label.textAlignment = .left
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let translationLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
-        label.textColor = .black
-        label.textAlignment = .left
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let wordLabel = WordLabel()
+    private let translationLabel = TranslationLabel()
     
     private lazy var deleteButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -78,7 +53,15 @@ final class MainCollectionViewCell: UICollectionViewCell {
         wordLabel.text = word
         translationLabel.text = translation
     }
-    
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        endEditing(true)
+    }
+}
+
+//MARK: - Set UI
+extension MainCollectionViewCell {
     override func layoutSubviews() {
         cellView.addSubview(wordLabel)
         cellView.addSubview(translationLabel)
@@ -102,11 +85,6 @@ final class MainCollectionViewCell: UICollectionViewCell {
             deleteButton.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -10),
             deleteButton.bottomAnchor.constraint(equalTo: cellView.bottomAnchor, constant: -10)
         ])
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        endEditing(true)
     }
 }
 

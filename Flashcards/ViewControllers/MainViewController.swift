@@ -18,6 +18,14 @@ final class MainViewController: UIViewController {
     
     private var isFlipped = true
     
+    private let menuCollectionView: UICollectionView = {
+        let layout = UICollectionViewLayout()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.isScrollEnabled = false
+        return collectionView
+    }()
+    
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.setCollectionViewLayout(createLayout(), animated: true)
@@ -111,8 +119,8 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         default:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
             let word = filteredWords[indexPath.item]
-            let name = word.name ?? ""
-            let translation = word.translation ?? ""
+            guard let name = word.name else { return UICollectionViewCell() }
+            guard let translation = word.translation else { return UICollectionViewCell() }
             cell.configure(word: name, translation: translation)
             cell.deleteAction = { [weak self] in
                 guard let word = self?.filteredWords.remove(at: indexPath.item) else { return }
@@ -144,7 +152,6 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 collectionView.reloadItems(at: [indexPath])
             }
         }
-
     }
     
     private func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: IndexPath) -> UICollectionReusableView {
@@ -223,7 +230,7 @@ extension MainViewController {
     }
     
     private func createLayout() -> UICollectionViewCompositionalLayout {
-        UICollectionViewCompositionalLayout { [unowned self] sectionindex, layoutEnvironment in
+        UICollectionViewCompositionalLayout { [unowned self] sectionindex, _ in
             switch sectionindex {
             case 0:
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))

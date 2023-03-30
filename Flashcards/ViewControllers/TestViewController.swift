@@ -10,43 +10,32 @@ import UIKit
 protocol SwipeCardsDataSource: AnyObject {
     func numberOfCardsToShow() -> Int
     func showCard(at index: Int) -> CardView
-}
-
-protocol SwipeCardsDelegate: AnyObject {
-    func swipeDidEnd(on view: CardView)
+    func update(word: Word, isLearnt: Bool)
 }
 
 class TestViewController: UIViewController {
     
-    private var myWords: [Word] = []
-    private var filteredWords: [Word] = []
+    private var words: [Word] = []
+    private var wordsToLearn: [Word] = []
     
     private var previousWordsCount: Int {
         1
     }
-    
-    private var stackContainerView: StackContainerView = {
-        let view = StackContainerView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
-        return view
-    }()
         
-    private lazy var countLabel: UILabel = {
-        let label = UILabel()
-        label.text = "\(previousWordsCount)/\(filteredWords.count)"
-        label.textColor = .black
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
+    private lazy var countLabel: TranslationLabel = {
+        let label = TranslationLabel()
+        label.text = "\(previousWordsCount)/\(wordsToLearn.count)"
         return label
     }()
     
+    private var stackContainerView = StackContainerView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupLayout()
         view.backgroundColor = .white
         fetchData()
-        filteredWords = myWords
-        setupLayout()
+        wordsToLearn = filterData()
         stackContainerView.dataSource = self
     }
     
@@ -54,11 +43,18 @@ class TestViewController: UIViewController {
         StorageManager.shared.fetchData { [unowned self] result in
             switch result {
             case .success(let words):
-                self.myWords = words
+                self.words = words
             case .failure(let error):
                 print(error.localizedDescription)
             }
         }
+    }
+
+    private func filterData() -> [Word] {
+       let wordsToLearn = words.filter { word in
+           word.isLearnt == false
+        }
+        return wordsToLearn
     }
 }
 //MARK: - Set UI
@@ -80,13 +76,17 @@ extension TestViewController {
 }
 //MARK: - SwipeCardsDataSource
 extension TestViewController: SwipeCardsDataSource {
+    func update(word: Word, isLearnt: Bool) {
+        StorageManager.shared.updateStatus(word, isLearnt: isLearnt)
+    }
+    
     func numberOfCardsToShow() -> Int {
-        filteredWords.count
+        wordsToLearn.count
     }
     
     func showCard(at index: Int) -> CardView {
         let card = CardView()
-        card.dataSourse = filteredWords[index]
+        card.dataSourse = wordsToLearn[index]
         return card
     }
 }

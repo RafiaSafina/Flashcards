@@ -25,48 +25,20 @@ class CardView: UIView {
     
     private lazy var frontView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
-        view.layer.shadowColor = UIColor.gray.cgColor
-        view.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
-        view.layer.shadowOpacity = 1.0
-        view.layer.masksToBounds = false
-        view.layer.cornerRadius = 10.0
-        view.translatesAutoresizingMaskIntoConstraints = false
+        view.configureBaseView()
         return view
     }()
     
     private lazy var backView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
         view.isHidden = true
-        view.layer.shadowColor = UIColor.gray.cgColor
-        view.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
-        view.layer.shadowOpacity = 1.0
-        view.layer.masksToBounds = false
-        view.layer.cornerRadius = 10.0
-        view.translatesAutoresizingMaskIntoConstraints = false
+        view.configureBaseView()
         return view
     }()
     
-    private let wordLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-        label.textColor = .black
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let wordLabel = WordLabel()
     
-    private let translationLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
-        label.textColor = .black
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let translationLabel = TranslationLabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -77,7 +49,73 @@ class CardView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    @objc private func didPan() {
+        guard let card = panGesture.view as? CardView else { return }
+        let point = panGesture.translation(in: self)
+        let centerOfParentContainer = CGPoint(x: self.frame.width / 2,
+                                              y: self.frame.height / 2)
+        
+        card.center = CGPoint(x: self.center.x + point.x,
+                              y: self.center.y + point.y)
+        
+        switch panGesture.state {
+        case .ended:
+            if (card.center.x) > 400 {
+                delegate?.swipeDidEnd(on: card)
 
+                swipe(card: card,
+                      point: point,
+                      centerOfParentContainer: centerOfParentContainer) //swipe right
+                
+                updateWordStatus()
+                
+                return
+            } else if card.center.x < -65 {
+                delegate?.swipeDidEnd(on: card)
+                
+                swipe(card: card,
+                      point: point,
+                      centerOfParentContainer: centerOfParentContainer) //swipe left
+            
+                return
+            }
+            
+            UIView.animate(withDuration: 0.2) {
+                card.transform = .identity
+                card.center = CGPoint(x: self.frame.width / 2,
+                                      y: self.frame.height / 2)
+            }
+            
+        case .changed:
+            let rotation = tan(point.x / (self.frame.width * 2.0))
+            card.transform = CGAffineTransform(rotationAngle: rotation)
+            
+        default:
+            break
+        }
+    }
+    
+    private func swipe(card: CardView, point: CGPoint, centerOfParentContainer: CGPoint) {
+        card.center = CGPoint(x: self.center.x + point.x,
+                              y: self.center.y + point.y)
+        UIView.animate(withDuration: 0.2) {
+            card.center = CGPoint(x: centerOfParentContainer.x + point.x + 200,
+                                  y: centerOfParentContainer.y + point.y + 75)
+            card.alpha = 0
+            self.layoutIfNeeded()
+        }
+    }
+    
+    private func updateWordStatus() {
+        guard let word = dataSourse else { return }
+        delegate?.updateWordStatus(word: word, isLearnt: true)
+//        StorageManager.shared.updateStatus(word, isLearnt: true)
+    }
+}
+
+//MARK: - Set UI
+extension CardView {
     override func layoutSubviews() {
         super.layoutSubviews()
         addSubview(frontView)
@@ -102,49 +140,5 @@ class CardView: UIView {
             wordLabel.centerXAnchor.constraint(equalTo: frontView.centerXAnchor),
             wordLabel.centerYAnchor.constraint(equalTo: frontView.centerYAnchor)
         ])
-    }
-    
-    @objc private func didPan() {
-        guard let card = panGesture.view as? CardView else { return }
-        let point = panGesture.translation(in: self)
-        let centerOfParentContainer = CGPoint(x: self.frame.width / 2,
-                                              y: self.frame.height / 2)
-        
-        card.center = CGPoint(x: self.center.x + point.x,
-                              y: self.center.y + point.y)
-        
-        switch panGesture.state {
-        case .ended:
-            if (card.center.x) > 400 {
-                delegate?.swipeDidEnd(on: card)
-                UIView.animate(withDuration: 0.2) {
-                    card.center = CGPoint(x: centerOfParentContainer.x + point.x + 200,
-                                          y: centerOfParentContainer.y + point.y + 75)
-                    card.alpha = 0
-                    self.layoutIfNeeded()
-                }
-                return
-            } else if card.center.x < -65 {
-                delegate?.swipeDidEnd(on: card)
-                UIView.animate(withDuration: 0.2) {
-                    card.center = CGPoint(x: centerOfParentContainer.x + point.x + 200,
-                                          y: centerOfParentContainer.y + point.y + 75)
-                    card.alpha = 0
-                    self.layoutIfNeeded()
-                }
-                return
-            }
-            UIView.animate(withDuration: 0.2) {
-                card.transform = .identity
-                card.center = CGPoint(x: self.frame.width / 2,
-                                      y: self.frame.height / 2)
-            }
-        case .changed:
-            let rotation = tan(point.x / (self.frame.width * 2.0))
-            card.transform = CGAffineTransform(rotationAngle: rotation)
-            
-        default:
-            break
-        }
     }
 }

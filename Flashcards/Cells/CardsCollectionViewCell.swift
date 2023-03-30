@@ -13,58 +13,17 @@ final class CardsCollectionViewCell: UICollectionViewCell {
 
     private var isFlipped = true
 
+    private lazy var frontCellView = FrontView()
+    private lazy var backCellView = BackView()
+
+    private let translationLabel = TranslationLabel()
+    private let wordLabel = WordLabel()
+    
     private lazy var singleTapGesture: UITapGestureRecognizer = {
         let tap = UITapGestureRecognizer(target: self, action: #selector(flip))
         tap.numberOfTapsRequired = 1
         return tap
     }()
-
-    private lazy var frontCellView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.shadowColor = UIColor.gray.cgColor
-        view.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
-        view.layer.shadowOpacity = 1.0
-        view.layer.masksToBounds = false
-        view.layer.cornerRadius = 10.0
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
-    private lazy var backCellView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.isHidden = true
-        view.layer.shadowColor = UIColor.gray.cgColor
-        view.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
-        view.layer.shadowOpacity = 1.0
-        view.layer.masksToBounds = false
-        view.layer.cornerRadius = 10.0
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
-    private let translationLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
-        label.textColor = .black
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private let wordLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-        label.textColor = .black
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-//    private editButton
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -94,7 +53,9 @@ final class CardsCollectionViewCell: UICollectionViewCell {
             contentView.removeGestureRecognizer(singleTapGesture)
         }
     }
-
+}
+//MARK: - Set UI
+extension CardsCollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         contentView.addSubview(frontCellView)

@@ -8,7 +8,6 @@
 import UIKit
 
 extension UIAlertController {
-    
     static func createAlertController(withTitle title: String) -> UIAlertController {
         UIAlertController(title: title, message: "Add new word", preferredStyle: .alert)
     }
