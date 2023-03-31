@@ -25,7 +25,6 @@
 		6C214A7729D51D2A00540AF6 /* StackContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7629D51D2A00540AF6 /* StackContainerView.swift */; };
 		6C214A7929D62CCF00540AF6 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7829D62CCF00540AF6 /* Extension.swift */; };
 		6C214A7B29D63B3900540AF6 /* Base UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7A29D63B3900540AF6 /* Base UI.swift */; };
-		6C214A7E29D6567200540AF6 /* MenuTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7D29D6567200540AF6 /* MenuTopBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,7 +48,6 @@
 		6C214A7629D51D2A00540AF6 /* StackContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackContainerView.swift; sourceTree = "<group>"; };
 		6C214A7829D62CCF00540AF6 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		6C214A7A29D63B3900540AF6 /* Base UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Base UI.swift"; sourceTree = "<group>"; };
-		6C214A7D29D6567200540AF6 /* MenuTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuTopBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,7 +109,6 @@
 				6C214A7029D3807600540AF6 /* CardView.swift */,
 				6C214A7629D51D2A00540AF6 /* StackContainerView.swift */,
 				6C214A7A29D63B3900540AF6 /* Base UI.swift */,
-				6C214A7D29D6567200540AF6 /* MenuTopBar.swift */,
 			);
 			path = UIElements;
 			sourceTree = "<group>";
@@ -242,7 +239,6 @@
 				6C214A1E29BEA65E00540AF6 /* SceneDelegate.swift in Sources */,
 				6C214A6729CFF4A000540AF6 /* TestViewController.swift in Sources */,
 				6C214A6B29CFF8C700540AF6 /* CardsCollectionViewCell.swift in Sources */,
-				6C214A7E29D6567200540AF6 /* MenuTopBar.swift in Sources */,
 				6C214A6329CFA63300540AF6 /* WordModel.xcdatamodeld in Sources */,
 				6C214A6529CFB53F00540AF6 /* Alert Extension.swift in Sources */,
 				6C214A7129D3807600540AF6 /* CardView.swift in Sources */,
@@ -316,7 +312,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -370,7 +366,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

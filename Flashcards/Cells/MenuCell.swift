@@ -11,7 +11,7 @@ final class MenuCell: UICollectionViewCell {
     
     static let cellID = "menuCellID"
     
-    private let label: UILabel = {
+    private lazy var label: UILabel = {
         let label = UILabel()
         label.configureLabel(fontWight: .heavy)
         return label
@@ -29,7 +29,7 @@ final class MenuCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             label.textColor = isSelected
-            ? .systemPink.withAlphaComponent(0.5)
+            ? .systemPink.withAlphaComponent(0.3)
             : .black
         }
     }
@@ -43,10 +43,9 @@ final class MenuCell: UICollectionViewCell {
         addSubview(label)
         
         NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             label.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
-            label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
-            label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
-            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
+            label.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 }

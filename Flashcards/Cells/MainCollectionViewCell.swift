@@ -37,6 +37,8 @@ final class MainCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        wordLabel.textAlignment = .left
+        translationLabel.textAlignment = .left
     }
     
     required init?(coder: NSCoder) {
@@ -76,7 +78,7 @@ extension MainCollectionViewCell {
             
             wordLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
             wordLabel.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -10),
-            wordLabel.topAnchor.constraint(equalTo: cellView.topAnchor, constant: 8),
+            wordLabel.topAnchor.constraint(equalTo: cellView.topAnchor, constant: 15),
             
             translationLabel.topAnchor.constraint(equalTo: wordLabel.bottomAnchor, constant: 10),
             translationLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
