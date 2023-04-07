@@ -55,11 +55,6 @@ final class MainCollectionViewCell: UICollectionViewCell {
         wordLabel.text = word
         translationLabel.text = translation
     }
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        endEditing(true)
-    }
 }
 
 //MARK: - Set UI

@@ -110,7 +110,6 @@ class CardView: UIView {
     private func updateWordStatus() {
         guard let word = dataSourse else { return }
         delegate?.updateWordStatus(word: word, isLearnt: true)
-//        StorageManager.shared.updateStatus(word, isLearnt: true)
     }
 }
 

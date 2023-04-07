@@ -11,20 +11,19 @@ protocol SwipeCardsDataSource: AnyObject {
     func numberOfCardsToShow() -> Int
     func showCard(at index: Int) -> CardView
     func update(word: Word, isLearnt: Bool)
+    func countPreviousWords()
 }
 
 class TestViewController: UIViewController {
     
-    private var words: [Word] = []
     private var wordsToLearn: [Word] = []
     
-    private var previousWordsCount: Int {
-        1
-    }
-        
+    private lazy var totalWords = wordsToLearn.count
+    private var previousWordsCount = 0 
+
     private lazy var countLabel: TranslationLabel = {
         let label = TranslationLabel()
-        label.text = "\(previousWordsCount)/\(wordsToLearn.count)"
+        label.text = "\(previousWordsCount)/\(totalWords)"
         return label
     }()
     
@@ -32,26 +31,19 @@ class TestViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupLayout()
-        view.backgroundColor = .white
         fetchData()
         wordsToLearn = filterData()
+        setupLayout()
+        view.backgroundColor = .white
         stackContainerView.dataSource = self
     }
     
     private func fetchData() {
-        StorageManager.shared.fetchData { [unowned self] result in
-            switch result {
-            case .success(let words):
-                self.words = words
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
+        
     }
-
+    
     private func filterData() -> [Word] {
-       let wordsToLearn = words.filter { word in
+        let wordsToLearn = TemporaryData.testWords.filter { word in
            word.isLearnt == false
         }
         return wordsToLearn
@@ -76,6 +68,11 @@ extension TestViewController {
 }
 //MARK: - SwipeCardsDataSource
 extension TestViewController: SwipeCardsDataSource {
+    func countPreviousWords() {
+        previousWordsCount += 1
+        countLabel.text = "\(previousWordsCount)/\(totalWords)"
+    }
+    
     func update(word: Word, isLearnt: Bool) {
         StorageManager.shared.updateStatus(word, isLearnt: isLearnt)
     }

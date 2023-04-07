@@ -101,6 +101,7 @@ extension StackContainerView: SwipeCardsDelegate {
                 }
             }
         }
+        dataSource.countPreviousWords()
     }
     
     func updateWordStatus(word: Word, isLearnt: Bool) {

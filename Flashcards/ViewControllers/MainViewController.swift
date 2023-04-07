@@ -9,12 +9,13 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
-    private let categories = TemporaryData.categories
+    private var categories = TemporaryData.categories
     
     private var myWords: [Word] = []
     private var dictionaryWords: [Word] = []
-    private var filteredWords: [Word] = []
     private lazy var allWords: [Word] = myWords + dictionaryWords
+    
+    private var filteredWords: [Word] = []
     
     private var isFlipped = true
     
@@ -51,7 +52,6 @@ final class MainViewController: UIViewController {
         filteredWords = allWords
         setNavigationBar()
         setLayout()
-        mainCollectionView.collectionViewLayout = createLayout()
         setCellSelected()
     }
 
@@ -112,7 +112,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == menuCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCell.cellID, for: indexPath) as? MenuCell else { return UICollectionViewCell() }
-            let category = categories[indexPath.item]
+            let category = categories[indexPath.item].name
             cell.configure(text: category)
             return cell
         } else {
@@ -128,12 +128,13 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 let word = filteredWords[indexPath.item]
                 guard let name = word.name else { return UICollectionViewCell() }
                 guard let translation = word.translation else { return UICollectionViewCell() }
-                cell.configure(word: name, translation: translation)
                 cell.deleteAction = { [weak self] in
+                    let cardIndexPath = IndexPath(item: indexPath.item, section: 0)
+                    self?.mainCollectionView.deleteItems(at: [indexPath, cardIndexPath])
                     guard let word = self?.filteredWords.remove(at: indexPath.item) else { return }
                     StorageManager.shared.delete(word)
-                    self?.mainCollectionView.deleteItems(at: [indexPath])
                 }
+                cell.configure(word: name, translation: translation)
                 return cell
             }
         }
@@ -145,14 +146,23 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         if collectionView == menuCollectionView {
             switch itemIndex {
             case 0:
+                TemporaryData.testWords = []
+                TemporaryData.testWords = allWords
                 filteredWords = allWords
                 mainCollectionView.reloadData()
+                print(TemporaryData.testWords)
             case 1:
+                TemporaryData.testWords = []
+                TemporaryData.testWords = myWords
                 filteredWords = myWords
                 mainCollectionView.reloadData()
+                print(TemporaryData.testWords)
             default:
+                TemporaryData.testWords = []
+                TemporaryData.testWords = dictionaryWords
                 filteredWords = dictionaryWords
                 mainCollectionView.reloadData()
+                print(TemporaryData.testWords)
             }
         } else {
             let word = filteredWords[indexPath.item]
@@ -164,17 +174,17 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     
     private func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: IndexPath) -> UICollectionReusableView {
         guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionReusableView.reuseIdentifier, for: indexPath) as? HeaderCollectionReusableView else { return UICollectionReusableView() }
-        
         let title = TemporaryData.sectionTitles[indexPath.section]
         header.configure(title: title)
         return header
     }
     
-   
-    
     private func setCellSelected() {
         let indexPath = IndexPath(item: 0, section: 0)
-        menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .bottom)
+        menuCollectionView.selectItem(at: indexPath,
+                                      animated: true,
+                                      scrollPosition: .bottom)
+        categories[0].isSelected = true
     }
 }
 
@@ -294,8 +304,12 @@ extension MainViewController {
     }
     
     private func supplementaryHeaderItem() -> NSCollectionLayoutBoundarySupplementaryItem {
-        .init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.1)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
+        .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
+                                heightDimension: .fractionalHeight(0.1)),
+              elementKind: UICollectionView.elementKindSectionHeader,
+              alignment: .topLeading)
     }
 }
+
 
 

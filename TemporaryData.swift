@@ -8,6 +8,13 @@
 import Foundation
 
 class TemporaryData {
-    static var categories = ["all words", "my words", "dictionary"]
-    static var sectionTitles = ["learn words", "all words" ]
+    static let categories = [
+       Category(name: "all words", isSelected: false),
+       Category(name: "my words", isSelected: false),
+       Category(name: "dictionary", isSelected: false)
+    ]
+    
+    static var testWords: [Word] = []
+    
+    static var sectionTitles = [" ", " "]
 }
