@@ -13,7 +13,7 @@ final class MainViewController: UIViewController {
     
     private var myWords: [Word] = []
     private var dictionaryWords: [Word] = []
-    private lazy var allWords: [Word] = myWords + dictionaryWords
+    private lazy var allWords = myWords + dictionaryWords
     
     private var filteredWords: [Word] = []
     
@@ -128,13 +128,8 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 let word = filteredWords[indexPath.item]
                 guard let name = word.name else { return UICollectionViewCell() }
                 guard let translation = word.translation else { return UICollectionViewCell() }
-                cell.deleteAction = { [weak self] in
-                    let cardIndexPath = IndexPath(item: indexPath.item, section: 0)
-                    self?.mainCollectionView.deleteItems(at: [indexPath, cardIndexPath])
-                    guard let word = self?.filteredWords.remove(at: indexPath.item) else { return }
-                    StorageManager.shared.delete(word)
-                }
                 cell.configure(word: name, translation: translation)
+                cell.delegate = self
                 return cell
             }
         }
@@ -146,23 +141,17 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         if collectionView == menuCollectionView {
             switch itemIndex {
             case 0:
-                TemporaryData.testWords = []
                 TemporaryData.testWords = allWords
                 filteredWords = allWords
                 mainCollectionView.reloadData()
-                print(TemporaryData.testWords)
             case 1:
-                TemporaryData.testWords = []
                 TemporaryData.testWords = myWords
                 filteredWords = myWords
                 mainCollectionView.reloadData()
-                print(TemporaryData.testWords)
             default:
-                TemporaryData.testWords = []
                 TemporaryData.testWords = dictionaryWords
                 filteredWords = dictionaryWords
                 mainCollectionView.reloadData()
-                print(TemporaryData.testWords)
             }
         } else {
             let word = filteredWords[indexPath.item]
@@ -184,7 +173,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         menuCollectionView.selectItem(at: indexPath,
                                       animated: true,
                                       scrollPosition: .bottom)
-        categories[0].isSelected = true
+        TemporaryData.testWords = allWords
     }
 }
 
@@ -308,6 +297,23 @@ extension MainViewController {
                                 heightDimension: .fractionalHeight(0.1)),
               elementKind: UICollectionView.elementKindSectionHeader,
               alignment: .topLeading)
+    }
+}
+//MARK: - SwipeableCollectionViewCellDelegate
+extension MainViewController: SwipeableCollectionViewCellDelegate {
+    func hiddenContainerViewTapped(inCell cell: UICollectionViewCell) {
+        guard let indexPath = mainCollectionView.indexPath(for: cell) else { return }
+        let word = myWords[indexPath.item]
+        myWords.remove(at: indexPath.item)
+        StorageManager.shared.delete(word)
+        mainCollectionView.performBatchUpdates({
+            self.mainCollectionView.deleteItems(at: [indexPath])
+        })
+    }
+    
+    func visibleContainerViewTapped(inCell cell: UICollectionViewCell) {
+        guard let indexPath = mainCollectionView.indexPath(for: cell) else { return }
+        print("Tapped item at index path: \(indexPath)")
     }
 }
 

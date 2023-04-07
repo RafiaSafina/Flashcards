@@ -17,6 +17,17 @@ extension UIView {
         self.layer.cornerRadius = 10.0
         self.translatesAutoresizingMaskIntoConstraints = false
     }
+    
+    func pinEdgesToSuperView() {
+        guard let superView = superview else { return }
+        translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            topAnchor.constraint(equalTo: superView.topAnchor),
+            leftAnchor.constraint(equalTo: superView.leftAnchor),
+            bottomAnchor.constraint(equalTo: superView.bottomAnchor),
+            rightAnchor.constraint(equalTo: superView.rightAnchor)
+        ])
+    }
 }
 
 extension UILabel {
@@ -26,6 +37,10 @@ extension UILabel {
         self.textColor = .black
         self.textAlignment = .center
         self.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    func setConstraints() {
+        
     }
 }
 
