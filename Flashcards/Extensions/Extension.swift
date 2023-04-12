@@ -38,10 +38,6 @@ extension UILabel {
         self.textAlignment = .center
         self.translatesAutoresizingMaskIntoConstraints = false
     }
-    
-    func setConstraints() {
-        
-    }
 }
 
 

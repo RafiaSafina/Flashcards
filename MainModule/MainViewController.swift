@@ -7,7 +7,19 @@
 
 import UIKit
 
+protocol SwipeableCollectionViewCellDelegate: AnyObject {
+    func hiddenContainerViewTapped(inCell cell: UICollectionViewCell)
+}
+
+protocol HeaderCollectionReusableViewDelegate: AnyObject {
+    func goToTestViewController()
+    func addNewWord()
+}
+
 final class MainViewController: UIViewController {
+    func updateSearchResults(for searchController: UISearchController) {
+        print()
+    }
     
     private var categories = TemporaryData.categories
     
@@ -19,6 +31,16 @@ final class MainViewController: UIViewController {
     
     private var isFlipped = true
     
+    private let searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.barTintColor = .black
+        searchBar.searchBarStyle = .minimal
+        searchBar.searchTextField.borderStyle = .roundedRect
+        searchBar.searchTextPositionAdjustment.horizontal = 10
+        searchBar.backgroundColor = .white
+        return searchBar
+    }()
+   
     private lazy var menuCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 0
@@ -53,15 +75,12 @@ final class MainViewController: UIViewController {
         setNavigationBar()
         setLayout()
         setCellSelected()
-    }
-
-    @objc private func startButtonPressed() {
-        let cardsVC = TestViewController()
-        navigationController?.pushViewController(cardsVC, animated: true)
+        searchBar.delegate = self
     }
     
-    @objc private func addButtonPressed() {
-        showAlert()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: "Find word in dictionary", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
     }
 }
 
@@ -93,6 +112,13 @@ extension MainViewController {
     
 //MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "reusableViewID", for: indexPath) as? HeaderCollectionReusableView else { return HeaderCollectionReusableView() }
+        headerView.delegate = self
+        return headerView
+    }
+    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         if collectionView == menuCollectionView {
             return 1
@@ -161,13 +187,6 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         }
     }
     
-    private func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: IndexPath) -> UICollectionReusableView {
-        guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionReusableView.reuseIdentifier, for: indexPath) as? HeaderCollectionReusableView else { return UICollectionReusableView() }
-        let title = TemporaryData.sectionTitles[indexPath.section]
-        header.configure(title: title)
-        return header
-    }
-    
     private func setCellSelected() {
         let indexPath = IndexPath(item: 0, section: 0)
         menuCollectionView.selectItem(at: indexPath,
@@ -189,7 +208,6 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - Alert Controller
 extension MainViewController {
-    
     private func showAlert(word: Word? = nil, completion: (() -> Void)? = nil) {
         let title = word != nil ? "Update Word" : "New Word"
         let alert = UIAlertController.createAlertController(withTitle: title)
@@ -210,30 +228,21 @@ extension MainViewController {
 extension MainViewController {
     private func setNavigationBar() {
         let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.systemPink.withAlphaComponent(0.5)]
         navBarAppearance.backgroundColor = .white
-        
+    
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
         
-        let learnButton = UIBarButtonItem(
-            title: "Learn",
-            style: .plain,
-            target: self,
-            action: #selector(startButtonPressed)
-        )
+        navigationItem.titleView = searchBar
         
-        let addButton = UIBarButtonItem(
-            barButtonSystemItem: .add,
-            target: self,
-            action: #selector(addButtonPressed)
-        )
+        let rightButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonTapped))
+        rightButton.tintColor = .darkGray
         
-        learnButton.tintColor = .systemPink.withAlphaComponent(0.5)
-        addButton.tintColor = .systemPink.withAlphaComponent(0.5)
+        navigationItem.rightBarButtonItem = rightButton
+    }
+    
+    @objc private func searchButtonTapped() {
         
-        navigationItem.leftBarButtonItem = learnButton
-        navigationItem.rightBarButtonItem = addButton
     }
     
     private func setLayout() {
@@ -246,7 +255,7 @@ extension MainViewController {
             menuCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             menuCollectionView.heightAnchor.constraint(equalToConstant: view.frame.width / 6),
             
-            mainCollectionView.topAnchor.constraint(equalTo: menuCollectionView.safeAreaLayoutGuide.topAnchor),
+            mainCollectionView.topAnchor.constraint(equalTo: menuCollectionView.topAnchor),
             mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             mainCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -265,11 +274,10 @@ extension MainViewController {
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                
+                group.contentInsets = .init(top: 70, leading: 0, bottom: 0, trailing: 0)
                 let section = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .groupPagingCentered
                 section.interGroupSpacing = 10
-                section.boundarySupplementaryItems = [self.supplementaryHeaderItem()]
                 section.supplementariesFollowContentInsets = false
                 return section
             default:
@@ -294,11 +302,12 @@ extension MainViewController {
     
     private func supplementaryHeaderItem() -> NSCollectionLayoutBoundarySupplementaryItem {
         .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
-                                heightDimension: .fractionalHeight(0.1)),
+                                heightDimension: .fractionalHeight(0.08)),
               elementKind: UICollectionView.elementKindSectionHeader,
               alignment: .topLeading)
     }
 }
+
 //MARK: - SwipeableCollectionViewCellDelegate
 extension MainViewController: SwipeableCollectionViewCellDelegate {
     func hiddenContainerViewTapped(inCell cell: UICollectionViewCell) {
@@ -310,11 +319,28 @@ extension MainViewController: SwipeableCollectionViewCellDelegate {
             self.mainCollectionView.deleteItems(at: [indexPath])
         })
     }
-    
-    func visibleContainerViewTapped(inCell cell: UICollectionViewCell) {
-        guard let indexPath = mainCollectionView.indexPath(for: cell) else { return }
-        print("Tapped item at index path: \(indexPath)")
+}
+
+//MARK: - HeaderCollectionReusableViewDelegate
+extension MainViewController: HeaderCollectionReusableViewDelegate {
+    func goToTestViewController() {
+        let cardsVC = TestViewController()
+        navigationController?.pushViewController(cardsVC, animated: true)
     }
+    
+    func addNewWord() {
+        showAlert()
+    }
+}
+
+//MARK: - UISearchBarDelegate
+extension MainViewController: UISearchBarDelegate {
+    
+}
+
+//MARK: - UISearchBarDelegate
+extension MainViewController: UISearchResultsUpdating {
+    
 }
 
 

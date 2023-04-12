@@ -7,6 +7,11 @@
 
 import CoreData
 
+
+protocol StorageManagerProtocol {
+    
+}
+
 final class StorageManager {
 
     static let shared = StorageManager()

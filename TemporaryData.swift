@@ -16,5 +16,11 @@ class TemporaryData {
     
     static var testWords: [Word] = []
     
-    static var sectionTitles = [" ", " "]
+    static var sectionTitles = [" ", "Words"]
+}
+
+enum titles: String {
+    case allWords = "All words"
+    case myWords = "My words"
+    case dict = "Dictionary"
 }

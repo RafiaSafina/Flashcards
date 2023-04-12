@@ -11,14 +11,28 @@ class HeaderCollectionReusableView: UICollectionReusableView {
     
     static let reuseIdentifier = "reusableViewID"
     
-    private let label: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.textColor = .black
-        label.backgroundColor = .green
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    weak var delegate: HeaderCollectionReusableViewDelegate?
+    
+    private lazy var learnButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.addTarget(self, action: #selector(learnButtonPressed), for: .touchUpInside)
+        button.setTitle("Learn", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .medium)
+        button.setTitleColor(.systemPink.withAlphaComponent(0.3), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
+    
+    private lazy var addButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.addTarget(self, action: #selector(addButtonPressed), for: .touchUpInside)
+        button.setImage(UIImage(systemName: "plus"), for: .normal)
+        button.tintColor = .systemPink.withAlphaComponent(0.3)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+   
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,17 +43,28 @@ class HeaderCollectionReusableView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    @objc private func learnButtonPressed() {
+        delegate?.goToTestViewController()
+    }
+    
+    @objc private func addButtonPressed() {
+        delegate?.addNewWord()
+    }
+    
     override func layoutSubviews() {
-        addSubview(label)
+        addSubview(learnButton)
+        addSubview(addButton)
+        
         NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            label.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-            label.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
+            learnButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+            learnButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 34),
+            
+            addButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+            addButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -34)
         ])
     }
     
     func configure(title: String) {
-        label.text = title
+//        label.text = title
     }
 }

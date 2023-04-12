@@ -25,9 +25,12 @@
 		6C214A7929D62CCF00540AF6 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7829D62CCF00540AF6 /* Extension.swift */; };
 		6C214A7B29D63B3900540AF6 /* Base UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7A29D63B3900540AF6 /* Base UI.swift */; };
 		6C214A8429DCB8FD00540AF6 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A8329DCB8FD00540AF6 /* NetworkManager.swift */; };
+		6C2B976329E75DBC003092C2 /* NewWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B976229E75DBC003092C2 /* NewWordViewController.swift */; };
+		6C2B976629E773EB003092C2 /* DictionaryWordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B976529E773EB003092C2 /* DictionaryWordModel.swift */; };
 		6C4D489F29E05BFE00885F57 /* CategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4D489E29E05BFE00885F57 /* CategoryModel.swift */; };
 		6C4D48A529E0654B00885F57 /* WordModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6C4D48A329E0654B00885F57 /* WordModel.xcdatamodeld */; };
-		6C4D48A729E0B6D100885F57 /* SwipableCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4D48A629E0B6D100885F57 /* SwipableCollectionViewCell.swift */; };
+		6C4D48A929E58F1800885F57 /* MainPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4D48A829E58F1800885F57 /* MainPresenter.swift */; };
+		6C4D48AE29E58FCD00885F57 /* TestPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4D48AD29E58FCD00885F57 /* TestPresenter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,9 +54,12 @@
 		6C214A7829D62CCF00540AF6 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		6C214A7A29D63B3900540AF6 /* Base UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Base UI.swift"; sourceTree = "<group>"; };
 		6C214A8329DCB8FD00540AF6 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		6C2B976229E75DBC003092C2 /* NewWordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewWordViewController.swift; sourceTree = "<group>"; };
+		6C2B976529E773EB003092C2 /* DictionaryWordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryWordModel.swift; sourceTree = "<group>"; };
 		6C4D489E29E05BFE00885F57 /* CategoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryModel.swift; sourceTree = "<group>"; };
 		6C4D48A429E0654B00885F57 /* WordModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WordModel.xcdatamodel; sourceTree = "<group>"; };
-		6C4D48A629E0B6D100885F57 /* SwipableCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipableCollectionViewCell.swift; sourceTree = "<group>"; };
+		6C4D48A829E58F1800885F57 /* MainPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPresenter.swift; sourceTree = "<group>"; };
+		6C4D48AD29E58FCD00885F57 /* TestPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,9 +94,9 @@
 			isa = PBXGroup;
 			children = (
 				6C214A6D29D13D6A00540AF6 /* App */,
-				6C214A6C29D13D4F00540AF6 /* Models */,
 				6C214A5E29CEE81400540AF6 /* Services */,
-				6C214A4929C6907300540AF6 /* ViewControllers */,
+				6C214A6C29D13D4F00540AF6 /* Models */,
+				6C4D48AA29E58F2400885F57 /* Modules */,
 				6C214A4729C6905100540AF6 /* Cells */,
 				6C214A4829C6906200540AF6 /* UIElements */,
 				6C214A7C29D63BBF00540AF6 /* Extensions */,
@@ -104,7 +110,6 @@
 				6C214A3929C28EEE00540AF6 /* MenuCell.swift */,
 				6C214A6A29CFF8C700540AF6 /* CardsCollectionViewCell.swift */,
 				6C214A3529BEFBA400540AF6 /* MainCollectionViewCell.swift */,
-				6C4D48A629E0B6D100885F57 /* SwipableCollectionViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -120,15 +125,6 @@
 			path = UIElements;
 			sourceTree = "<group>";
 		};
-		6C214A4929C6907300540AF6 /* ViewControllers */ = {
-			isa = PBXGroup;
-			children = (
-				6C214A1F29BEA65E00540AF6 /* MainViewController.swift */,
-				6C214A6629CFF4A000540AF6 /* TestViewController.swift */,
-			);
-			path = ViewControllers;
-			sourceTree = "<group>";
-		};
 		6C214A5E29CEE81400540AF6 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -141,6 +137,7 @@
 		6C214A6C29D13D4F00540AF6 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				6C2B976529E773EB003092C2 /* DictionaryWordModel.swift */,
 				6C4D489E29E05BFE00885F57 /* CategoryModel.swift */,
 				6C4D48A329E0654B00885F57 /* WordModel.xcdatamodeld */,
 			);
@@ -166,6 +163,43 @@
 				6C214A6429CFB53F00540AF6 /* Alert Extension.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		6C2B976429E75DC6003092C2 /* NewWordsModule */ = {
+			isa = PBXGroup;
+			children = (
+				6C2B976229E75DBC003092C2 /* NewWordViewController.swift */,
+			);
+			path = NewWordsModule;
+			sourceTree = "<group>";
+		};
+		6C4D48AA29E58F2400885F57 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				6C4D48AB29E58F4700885F57 /* MainModule */,
+				6C4D48AC29E58FA600885F57 /* TestModule */,
+				6C2B976429E75DC6003092C2 /* NewWordsModule */,
+			);
+			name = Modules;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		6C4D48AB29E58F4700885F57 /* MainModule */ = {
+			isa = PBXGroup;
+			children = (
+				6C214A1F29BEA65E00540AF6 /* MainViewController.swift */,
+				6C4D48A829E58F1800885F57 /* MainPresenter.swift */,
+			);
+			path = MainModule;
+			sourceTree = "<group>";
+		};
+		6C4D48AC29E58FA600885F57 /* TestModule */ = {
+			isa = PBXGroup;
+			children = (
+				6C214A6629CFF4A000540AF6 /* TestViewController.swift */,
+				6C4D48AD29E58FCD00885F57 /* TestPresenter.swift */,
+			);
+			path = TestModule;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -238,8 +272,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C4D48A729E0B6D100885F57 /* SwipableCollectionViewCell.swift in Sources */,
 				6C214A8429DCB8FD00540AF6 /* NetworkManager.swift in Sources */,
+				6C4D48A929E58F1800885F57 /* MainPresenter.swift in Sources */,
 				6C214A3A29C28EEE00540AF6 /* MenuCell.swift in Sources */,
 				6C214A7B29D63B3900540AF6 /* Base UI.swift in Sources */,
 				6C214A6029CEEB9000540AF6 /* TemporaryData.swift in Sources */,
@@ -249,11 +283,14 @@
 				6C214A6F29D2669000540AF6 /* HeaderCollectionReusableView.swift in Sources */,
 				6C4D489F29E05BFE00885F57 /* CategoryModel.swift in Sources */,
 				6C214A3629BEFBA400540AF6 /* MainCollectionViewCell.swift in Sources */,
+				6C2B976629E773EB003092C2 /* DictionaryWordModel.swift in Sources */,
+				6C2B976329E75DBC003092C2 /* NewWordViewController.swift in Sources */,
 				6C214A1E29BEA65E00540AF6 /* SceneDelegate.swift in Sources */,
 				6C214A6729CFF4A000540AF6 /* TestViewController.swift in Sources */,
 				6C214A6B29CFF8C700540AF6 /* CardsCollectionViewCell.swift in Sources */,
 				6C214A6529CFB53F00540AF6 /* Alert Extension.swift in Sources */,
 				6C214A7129D3807600540AF6 /* CardView.swift in Sources */,
+				6C4D48AE29E58FCD00885F57 /* TestPresenter.swift in Sources */,
 				6C214A7929D62CCF00540AF6 /* Extension.swift in Sources */,
 				6C214A7729D51D2A00540AF6 /* StackContainerView.swift in Sources */,
 				6C214A4D29CD479200540AF6 /* StorageManager.swift in Sources */,
