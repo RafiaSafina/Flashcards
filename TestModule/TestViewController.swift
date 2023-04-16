@@ -9,7 +9,7 @@ import UIKit
 
 protocol SwipeCardsDataSource: AnyObject {
     func numberOfCardsToShow() -> Int
-    func showCard(at index: Int) -> CardView
+    func showCard(at index: Int) -> SwipeCardView
     func update(word: Word, isLearnt: Bool)
     func countPreviousWords()
     func countWrongAnswers()
@@ -118,8 +118,8 @@ extension TestViewController: SwipeCardsDataSource {
         wordsToLearn.count
     }
     
-    func showCard(at index: Int) -> CardView {
-        let card = CardView()
+    func showCard(at index: Int) -> SwipeCardView {
+        let card = SwipeCardView()
         card.dataSourse = wordsToLearn[index]
         return card
     }

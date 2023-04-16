@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CardView: UIView {
+class SwipeCardView: UIView {
     
     var dataSourse: Word? {
         didSet {
@@ -51,7 +51,7 @@ class CardView: UIView {
     }
     
     @objc private func didPan() {
-        guard let card = panGesture.view as? CardView else { return }
+        guard let card = panGesture.view as? SwipeCardView else { return }
         let point = panGesture.translation(in: self)
         let centerOfParentContainer = CGPoint(x: self.frame.width / 2,
                                               y: self.frame.height / 2)
@@ -96,7 +96,7 @@ class CardView: UIView {
         }
     }
     
-    private func swipe(card: CardView, point: CGPoint, centerOfParentContainer: CGPoint) {
+    private func swipe(card: SwipeCardView, point: CGPoint, centerOfParentContainer: CGPoint) {
         card.center = CGPoint(x: self.center.x + point.x,
                               y: self.center.y + point.y)
         UIView.animate(withDuration: 0.2) {
@@ -114,7 +114,7 @@ class CardView: UIView {
 }
 
 //MARK: - Set UI
-extension CardView {
+extension SwipeCardView {
     override func layoutSubviews() {
         super.layoutSubviews()
         addSubview(frontView)

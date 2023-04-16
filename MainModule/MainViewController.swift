@@ -16,10 +16,11 @@ protocol HeaderCollectionReusableViewDelegate: AnyObject {
     func addNewWord()
 }
 
+protocol SearchTableViewCellDelegate: AnyObject {
+    func setSearchText() -> String
+}
+
 final class MainViewController: UIViewController {
-    func updateSearchResults(for searchController: UISearchController) {
-        print()
-    }
     
     private var categories = TemporaryData.categories
     
@@ -31,21 +32,27 @@ final class MainViewController: UIViewController {
     
     private var isFlipped = true
     
-    private let searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.barTintColor = .black
-        searchBar.searchBarStyle = .minimal
-        searchBar.searchTextField.borderStyle = .roundedRect
-        searchBar.searchTextPositionAdjustment.horizontal = 10
-        searchBar.backgroundColor = .white
-        return searchBar
+    private var searchBarIsEmpty: Bool {
+        guard let text = searchController.searchBar.text else { return false }
+        return text.isEmpty
+    }
+    
+    private let resultController = ResultViewController(style: .plain)
+    
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController(searchResultsController: resultController)
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.searchTextField.borderStyle = .roundedRect
+        searchController.searchResultsUpdater = resultController
+        searchController.searchBar.delegate = resultController
+        searchController.searchBar.searchBarStyle = .prominent
+        return searchController
     }()
    
     private lazy var menuCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 0
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.backgroundColor = .blue
         cv.isScrollEnabled = false
         cv.delegate = self
         cv.dataSource = self
@@ -75,12 +82,21 @@ final class MainViewController: UIViewController {
         setNavigationBar()
         setLayout()
         setCellSelected()
-        searchBar.delegate = self
+        definesPresentationContext = true
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: "Find word in dictionary", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+        searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: "Find word in dictionary", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+    }
+    
+    private func setCellSelected() {
+        let indexPath = IndexPath(item: 0, section: 0)
+        menuCollectionView.selectItem(at: indexPath,
+                                      animated: true,
+                                      scrollPosition: .bottom)
+        TemporaryData.testWords = allWords
     }
 }
 
@@ -103,10 +119,6 @@ extension MainViewController {
             filteredWords.append(word)
             mainCollectionView.insertItems(at: [IndexPath(item: filteredWords.count - 1, section: 0)])
         }
-    }
-    
-    private func delete(word: Word) {
-        StorageManager.shared.delete(word)
     }
 }
     
@@ -135,7 +147,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         }
     }
     
-    internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == menuCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCell.cellID, for: indexPath) as? MenuCell else { return UICollectionViewCell() }
             let category = categories[indexPath.item].name
@@ -186,14 +198,6 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             }
         }
     }
-    
-    private func setCellSelected() {
-        let indexPath = IndexPath(item: 0, section: 0)
-        menuCollectionView.selectItem(at: indexPath,
-                                      animated: true,
-                                      scrollPosition: .bottom)
-        TemporaryData.testWords = allWords
-    }
 }
 
 //MARK: - UICollectionViewFlowDelegate
@@ -233,16 +237,7 @@ extension MainViewController {
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
         
-        navigationItem.titleView = searchBar
-        
-        let rightButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonTapped))
-        rightButton.tintColor = .darkGray
-        
-        navigationItem.rightBarButtonItem = rightButton
-    }
-    
-    @objc private func searchButtonTapped() {
-        
+        navigationItem.searchController = searchController
     }
     
     private func setLayout() {
@@ -333,14 +328,11 @@ extension MainViewController: HeaderCollectionReusableViewDelegate {
     }
 }
 
-//MARK: - UISearchBarDelegate
-extension MainViewController: UISearchBarDelegate {
-    
-}
-
-//MARK: - UISearchBarDelegate
-extension MainViewController: UISearchResultsUpdating {
-    
+//MARK: - UISearchControllerDelegate
+extension MainViewController: UISearchControllerDelegate {
+    func presentSearchController(_ searchController: UISearchController) {
+        searchController.showsSearchResultsController = true
+    }
 }
 
 

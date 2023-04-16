@@ -8,7 +8,7 @@
 import UIKit
 
 protocol SwipeCardsDelegate: AnyObject {
-    func swipeDidEnd(on view: CardView)
+    func swipeDidEnd(on view: SwipeCardView)
     func updateWordStatus(word: Word, isLearnt: Bool)
 }
 
@@ -16,14 +16,14 @@ class StackContainerView: UIView {
     
     private var numberOfCardsToShow = 0
     private var numberOfVisibleCards = 2
-    private var cardViews: [CardView] = []
+    private var cardViews: [SwipeCardView] = []
     private var remainingCards = 0
     
     private let horizontalInset: CGFloat = 10.0
     private let verticalInset: CGFloat = 10.0
     
-    private var visibleCards: [CardView] {
-        subviews as? [CardView] ?? []
+    private var visibleCards: [SwipeCardView] {
+        subviews as? [SwipeCardView] ?? []
     }
     
     weak var dataSource: SwipeCardsDataSource? {
@@ -55,7 +55,7 @@ class StackContainerView: UIView {
         }
     }
     
-    private func addCardView(cardView: CardView, atIndex index: Int) {
+    private func addCardView(cardView: SwipeCardView, atIndex index: Int) {
         cardView.delegate = self
         addCardFrame(index: index, cardView: cardView)
         cardViews.append(cardView)
@@ -63,7 +63,7 @@ class StackContainerView: UIView {
         remainingCards -= 1
     }
     
-    private func addCardFrame(index: Int, cardView: CardView) {
+    private func addCardFrame(index: Int, cardView: SwipeCardView) {
         var cardViewFrame = bounds
         let horizontalInset = (CGFloat(index) * self.horizontalInset)
         let verticalInset = (CGFloat(index) * self.verticalInset)
@@ -85,7 +85,7 @@ class StackContainerView: UIView {
 
 //MARK: - SwipeCardsDelegate
 extension StackContainerView: SwipeCardsDelegate {
-    func swipeDidEnd(on view: CardView) {
+    func swipeDidEnd(on view: SwipeCardView) {
         guard let dataSource = dataSource else { return }
         view.removeFromSuperview()
         

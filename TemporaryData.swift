@@ -15,8 +15,7 @@ class TemporaryData {
     ]
     
     static var testWords: [Word] = []
-    
-    static var sectionTitles = [" ", "Words"]
+    static var searchWords: [DictWord] = []
 }
 
 enum titles: String {
