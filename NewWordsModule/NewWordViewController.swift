@@ -6,27 +6,33 @@
 //
 
 import UIKit
+ 
+protocol PassDataDelegate: AnyObject {
+    func receiveData(word: String, translation: String) 
+}
 
 class NewWordViewController: UIViewController {
     
-    var dictWord: Def?
-    
     private let cardView = StaticCardView()
+    
+    private var word: String?
+    private var translation: String?
     
     private lazy var exitButton: UIButton = {
         let button = UIButton(type: .custom)
         button.addTarget(self, action: #selector(goToRoot), for: .touchUpInside)
-        button.setImage(UIImage(systemName: "xmark"), for: .normal)
+        button.setImage(UIImage(systemName: Constants.Images.xmark), for: .normal)
         button.tintColor = .black
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    private lazy var addButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        button.setImage(UIImage(systemName: "plus.circle"), for: .normal)
-        button.addTarget(self, action: #selector(goToRoot), for: .touchUpInside)
+    private lazy var saveButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle(Constants.String.cancelButtonTitle, for: .normal)
         button.tintColor = .black
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 24)
+        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -42,30 +48,38 @@ class NewWordViewController: UIViewController {
         dismiss(animated: true)
     }
     
+    @objc private func saveButtonTapped() {
+        print("save")
+    }
+    
     private func configure() {
-        guard let word = dictWord?.text else { return }
-        guard let tr = dictWord?.tr[0].text else { return }
-        cardView.configure(word: word, translation: tr)
+        guard let word = word, let translation = translation else { return }
+        cardView.configure(word: word, translation: translation)
     }
     
     private func setupLayout() {
         view.addSubview(cardView)
         cardView.addSubview(exitButton)
-        cardView.addSubview(addButton)
-        
+        cardView.addSubview(saveButton)
+     
         NSLayoutConstraint.activate([
             exitButton.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 20),
             exitButton.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 20),
             
-            addButton.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -20),
-            addButton.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -20),
-            addButton.widthAnchor.constraint(equalToConstant: 40),
-            addButton.heightAnchor.constraint(equalToConstant: 40),
+            saveButton.centerXAnchor.constraint(equalTo: cardView.centerXAnchor),
+            saveButton.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -20),
             
             cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             cardView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             cardView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 3/4),
             cardView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 2/3)
         ])
+    }
+}
+
+extension NewWordViewController: PassDataDelegate {
+    func receiveData(word: String, translation: String) {
+        self.word = word
+        self.translation = translation
     }
 }

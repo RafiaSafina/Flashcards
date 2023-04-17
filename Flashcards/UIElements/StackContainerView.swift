@@ -39,7 +39,7 @@ class StackContainerView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.String.initError)
     }
     
     func reloadData() {

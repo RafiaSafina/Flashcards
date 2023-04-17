@@ -28,14 +28,14 @@ class TestViewController: UIViewController {
     
     private lazy var wrongAnswerLabel: TranslationLabel = {
         let label = TranslationLabel()
-        label.text = "\(wrongAnswers)"
+        label.text = String(wrongAnswers)
         label.textColor = .systemRed
         return label
     }()
     
     private lazy var rightAnswerLabel: TranslationLabel = {
         let label = TranslationLabel()
-        label.text = "\(rightAnswers)"
+        label.text = String(rightAnswers)
         label.textColor = .systemGreen
         return label
     }()
@@ -66,9 +66,12 @@ class TestViewController: UIViewController {
 extension TestViewController {
     
     private func setupNavigationBar() {
-        title = "\(previousWordsCount)/\(totalWords)"
+        let previousWordsCount = String(previousWordsCount)
+        let totalWords = String(totalWords)
         
-        let leftBarItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(backToRoot))
+        title = previousWordsCount + "/" + totalWords
+        
+        let leftBarItem = UIBarButtonItem(image: UIImage(systemName: Constants.Images.xmark), style: .plain, target: self, action: #selector(backToRoot))
         leftBarItem.tintColor = .systemPink.withAlphaComponent(0.3)
         
         navigationItem.leftBarButtonItem = leftBarItem
@@ -97,17 +100,19 @@ extension TestViewController {
 extension TestViewController: SwipeCardsDataSource {
     func countWrongAnswers() {
         wrongAnswers += 1
-        wrongAnswerLabel.text = "\(wrongAnswers)"
+        wrongAnswerLabel.text =  String(wrongAnswers)
     }
     
     func countRightAnswers() {
         rightAnswers += 1
-        rightAnswerLabel.text = "\(rightAnswers)"
+        rightAnswerLabel.text = String(rightAnswers)
     }
     
     func countPreviousWords() {
         previousWordsCount += 1
-        title = "\(previousWordsCount)/\(totalWords)"
+        let prevWordsCount = String(previousWordsCount)
+        let totalWords = String(totalWords)
+        title = prevWordsCount + totalWords
     }
     
     func update(word: Word, isLearnt: Bool) {

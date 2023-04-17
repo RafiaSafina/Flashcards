@@ -21,6 +21,7 @@ extension UIView {
     func pinEdgesToSuperView() {
         guard let superView = superview else { return }
         translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             topAnchor.constraint(equalTo: superView.topAnchor),
             leftAnchor.constraint(equalTo: superView.leftAnchor),
@@ -36,6 +37,17 @@ extension UILabel {
         self.font = UIFont.systemFont(ofSize: 20, weight: fontWight)
         self.textColor = .black
         self.textAlignment = .center
+        self.translatesAutoresizingMaskIntoConstraints = false
+    }
+}
+
+extension UITextField {
+    func configureTF(fontWeight: UIFont.Weight, textAlignment: NSTextAlignment) {
+        self.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        self.textColor = .black
+        self.borderStyle = .none
+        self.isEnabled = false
+        self.textAlignment = textAlignment
         self.translatesAutoresizingMaskIntoConstraints = false
     }
 }

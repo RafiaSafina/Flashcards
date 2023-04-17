@@ -9,14 +9,12 @@ import UIKit
 
 class HeaderCollectionReusableView: UICollectionReusableView {
     
-    static let reuseIdentifier = "reusableViewID"
-    
     weak var delegate: HeaderCollectionReusableViewDelegate?
     
     private lazy var learnButton: UIButton = {
         let button = UIButton(type: .system)
         button.addTarget(self, action: #selector(learnButtonPressed), for: .touchUpInside)
-        button.setTitle("Learn", for: .normal)
+        button.setTitle(Constants.String.learnButtonTitle, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .medium)
         button.setTitleColor(.systemPink.withAlphaComponent(0.3), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -26,13 +24,11 @@ class HeaderCollectionReusableView: UICollectionReusableView {
     private lazy var addButton: UIButton = {
         let button = UIButton(type: .custom)
         button.addTarget(self, action: #selector(addButtonPressed), for: .touchUpInside)
-        button.setImage(UIImage(systemName: "plus"), for: .normal)
+        button.setImage(UIImage(systemName: Constants.Images.plus), for: .normal)
         button.tintColor = .systemPink.withAlphaComponent(0.3)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
-   
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -40,7 +36,7 @@ class HeaderCollectionReusableView: UICollectionReusableView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.String.initError)
     }
     
     @objc private func learnButtonPressed() {
@@ -62,9 +58,5 @@ class HeaderCollectionReusableView: UICollectionReusableView {
             addButton.bottomAnchor.constraint(equalTo: bottomAnchor),
             addButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -34)
         ])
-    }
-    
-    func configure(title: String) {
-//        label.text = title
     }
 }

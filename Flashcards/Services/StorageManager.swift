@@ -49,16 +49,16 @@ final class StorageManager {
         }
     }
     
-    func fetchTestWords(completion: (Result<[TestWords], Error>) -> Void) {
-        let fetchRequest = TestWords.fetchRequest()
-        
-        do {
-            let testWords = try viewContext.fetch(fetchRequest)
-            completion(.success(testWords))
-        } catch let error {
-            completion(.failure(error))
-        }
-    }
+//    func fetchTestWords(completion: (Result<[TestWords], Error>) -> Void) {
+//        let fetchRequest = TestWords.fetchRequest()
+//        
+//        do {
+//            let testWords = try viewContext.fetch(fetchRequest)
+//            completion(.success(testWords))
+//        } catch let error {
+//            completion(.failure(error))
+//        }
+//    }
     
     func update(_ word: Word, newName: String, newTranslation: String) {
         word.name = newName

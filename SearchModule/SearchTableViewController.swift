@@ -14,7 +14,7 @@ class ResultViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellId")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.ReuseIdentifiers.searchCell)
         view.backgroundColor = .white
     }
 
@@ -23,7 +23,7 @@ class ResultViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.ReuseIdentifiers.searchCell, for: indexPath)
         
         var content = cell.defaultContentConfiguration()
         content.text = items[indexPath.row]
@@ -39,14 +39,14 @@ class ResultViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        let def = words[indexPath.row].def[0]
-       
-        let newWordVC = NewWordViewController()
-        newWordVC.dictWord = def
-        
-        show(newWordVC, sender: nil)
+//        tableView.deselectRow(at: indexPath, animated: true)
+//
+//        let def = words[indexPath.row].def[0]
+//
+//        let newWordVC = NewWordViewController()
+//        newWordVC.dictWord = def
+//
+//        show(newWordVC, sender: nil)
     }
 }
 

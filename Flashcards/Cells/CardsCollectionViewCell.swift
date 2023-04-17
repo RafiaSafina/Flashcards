@@ -8,13 +8,21 @@
 import UIKit
 
 final class CardsCollectionViewCell: UICollectionViewCell {
-    
-    static let cellID = "cardsCellID"
 
     private var isFlipped = true
-
-    private lazy var frontCellView = FrontView()
-    private lazy var backCellView = BackView()
+    
+    private lazy var frontCellView: UIView = {
+        let view = UIView()
+        view.configureBaseView()
+        return view
+    }()
+    
+    private lazy var backCellView: UIView = {
+        let view = UIView()
+        view.configureBaseView()
+        view.isHidden = true
+        return view
+    }()
 
     private let translationLabel = TranslationLabel()
     private let wordLabel = WordLabel()
@@ -32,7 +40,7 @@ final class CardsCollectionViewCell: UICollectionViewCell {
     }
 
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.String.initError)
     }
 
     @objc private func flip() {

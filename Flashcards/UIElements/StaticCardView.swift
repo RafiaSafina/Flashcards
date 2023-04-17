@@ -9,22 +9,24 @@ import UIKit
 
 class StaticCardView: UIView {
     
-    private let wordLabel: UILabel = {
-        let label = UILabel()
-        label.configureLabel(fontWight: .bold)
-        return label
+    private let wordTextField: UITextField = {
+        let textfield = UITextField()
+        textfield.configureTF(fontWeight: .bold,
+                              textAlignment: .left)
+        return textfield
     }()
     
-    private let translationLabel: UILabel = {
-        let label = UILabel()
-        label.configureLabel(fontWight: .medium)
-        return label
+    private let translationTextField: UITextField = {
+        let textfield = UITextField()
+        textfield.configureTF(fontWeight: .regular,
+                              textAlignment: .left)
+        return textfield
     }()
     
     private lazy var stackView: UIStackView = {
         let stack = UIStackView()
-        stack.addArrangedSubview(wordLabel)
-        stack.addArrangedSubview(translationLabel)
+        stack.addArrangedSubview(wordTextField)
+        stack.addArrangedSubview(translationTextField)
         stack.axis = .vertical
         stack.distribution = .fillProportionally
         stack.alignment = .fill
@@ -40,20 +42,22 @@ class StaticCardView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.String.initError)
     }
     
     func configure(word: String, translation: String) {
-        wordLabel.text = word
-        translationLabel.text = translation
+        wordTextField.text = word
+        translationTextField.text = translation
     }
     
     private func setupLayout() {
         addSubview(stackView)
         
         NSLayoutConstraint.activate([
-            stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            stackView.centerXAnchor.constraint(equalTo: centerXAnchor)
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20)
         ])
     }
 }

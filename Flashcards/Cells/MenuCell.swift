@@ -9,8 +9,6 @@ import UIKit
 
 final class MenuCell: UICollectionViewCell {
     
-    static let cellID = "menuCellID"
-    
     private lazy var label: UILabel = {
         let label = UILabel()
         label.configureLabel(fontWight: .heavy)
@@ -23,7 +21,7 @@ final class MenuCell: UICollectionViewCell {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.String.initError)
     }
     
     override var isSelected: Bool {

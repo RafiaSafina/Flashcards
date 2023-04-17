@@ -15,7 +15,7 @@ class WordLabel: UILabel {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.String.initError)
     }
 }
 
@@ -26,30 +26,6 @@ class TranslationLabel: UILabel {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-//MARK: - Views
-class FrontView: UIView {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureBaseView()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class BackView: UIView {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureBaseView()
-        isHidden = true
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.String.initError)
     }
 }

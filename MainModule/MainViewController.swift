@@ -22,20 +22,19 @@ protocol SearchTableViewCellDelegate: AnyObject {
 
 final class MainViewController: UIViewController {
     
+    weak var delegate: PassDataDelegate?
+    
     private var categories = TemporaryData.categories
     
     private var myWords: [Word] = []
     private var dictionaryWords: [Word] = []
-    private lazy var allWords = myWords + dictionaryWords
-    
     private var filteredWords: [Word] = []
     
-    private var isFlipped = true
-    
-    private var searchBarIsEmpty: Bool {
-        guard let text = searchController.searchBar.text else { return false }
-        return text.isEmpty
+    private var allWords: [Word] {
+        myWords + dictionaryWords
     }
+    
+    private var isFlipped = true
     
     private let resultController = ResultViewController(style: .plain)
     
@@ -46,6 +45,7 @@ final class MainViewController: UIViewController {
         searchController.searchResultsUpdater = resultController
         searchController.searchBar.delegate = resultController
         searchController.searchBar.searchBarStyle = .prominent
+        searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: Constants.String.searchBarPlaceholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
         return searchController
     }()
    
@@ -56,7 +56,7 @@ final class MainViewController: UIViewController {
         cv.isScrollEnabled = false
         cv.delegate = self
         cv.dataSource = self
-        cv.register(MenuCell.self, forCellWithReuseIdentifier: MenuCell.cellID)
+        cv.register(MenuCell.self, forCellWithReuseIdentifier: Constants.ReuseIdentifiers.menuCell)
         cv.translatesAutoresizingMaskIntoConstraints = false
         return cv
     }()
@@ -68,9 +68,9 @@ final class MainViewController: UIViewController {
         cv.delegate = self
         cv.dataSource = self
         cv.translatesAutoresizingMaskIntoConstraints = false
-        cv.register(MainCollectionViewCell.self, forCellWithReuseIdentifier: MainCollectionViewCell.reuseIdentifier)
-        cv.register(CardsCollectionViewCell.self, forCellWithReuseIdentifier: CardsCollectionViewCell.cellID)
-        cv.register(HeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionReusableView.reuseIdentifier)
+        cv.register(MainCollectionViewCell.self, forCellWithReuseIdentifier: Constants.ReuseIdentifiers.mainCell)
+        cv.register(CardsCollectionViewCell.self, forCellWithReuseIdentifier: Constants.ReuseIdentifiers.flipCell)
+        cv.register(HeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.ReuseIdentifiers.header)
         return cv
     }()
     
@@ -78,17 +78,10 @@ final class MainViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         fetchData()
-        filteredWords = allWords
         setNavigationBar()
         setLayout()
         setCellSelected()
         definesPresentationContext = true
-        
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: "Find word in dictionary", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
     }
     
     private func setCellSelected() {
@@ -100,13 +93,13 @@ final class MainViewController: UIViewController {
     }
 }
 
-//MARK: - CRUD
+//MARK: - StorageManager
 extension MainViewController {
     private func fetchData() {
         StorageManager.shared.fetchData { [unowned self] result in
             switch result {
             case .success(let words):
-                self.myWords = words
+                    self.filteredWords = words
             case .failure(let error):
                 print(error.localizedDescription)
             }
@@ -122,11 +115,10 @@ extension MainViewController {
     }
 }
     
-//MARK: - UICollectionViewDelegate, UICollectionViewDataSource
-extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    
+//MARK: - UICollectionViewDataSource
+extension MainViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "reusableViewID", for: indexPath) as? HeaderCollectionReusableView else { return HeaderCollectionReusableView() }
+        guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.ReuseIdentifiers.header, for: indexPath) as? HeaderCollectionReusableView else { return HeaderCollectionReusableView() }
         headerView.delegate = self
         return headerView
     }
@@ -149,30 +141,44 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     
      func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == menuCollectionView {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCell.cellID, for: indexPath) as? MenuCell else { return UICollectionViewCell() }
-            let category = categories[indexPath.item].name
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.ReuseIdentifiers.menuCell, for: indexPath) as? MenuCell else { return UICollectionViewCell() }
+            let category = categories[indexPath.item]
             cell.configure(text: category)
             return cell
         } else {
             switch indexPath.section {
             case 0:
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CardsCollectionViewCell.cellID, for: indexPath) as? CardsCollectionViewCell else { return UICollectionViewCell() }
-                guard let name = myWords[indexPath.item].name else { return UICollectionViewCell() }
-                guard let translation = myWords[indexPath.item].translation else { return UICollectionViewCell() }
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.ReuseIdentifiers.flipCell, for: indexPath) as? CardsCollectionViewCell else { return UICollectionViewCell() }
+                
+                guard let name = filteredWords[indexPath.item].name,
+                      let translation = filteredWords[indexPath.item].translation else { return UICollectionViewCell() }
+                
                 cell.configure(name: name, translation: translation)
+                
                 return cell
+                
             default:
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.reuseIdentifier, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.ReuseIdentifiers.mainCell, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
+                
                 let word = filteredWords[indexPath.item]
-                guard let name = word.name else { return UICollectionViewCell() }
-                guard let translation = word.translation else { return UICollectionViewCell() }
+                
+                guard let name = word.name, let translation = word.translation else {
+                    return UICollectionViewCell() }
+                
                 cell.configure(word: name, translation: translation)
-                cell.delegate = self
+                cell.deleteHandler = { [weak self] in
+                    StorageManager.shared.delete(word)
+                    self?.filteredWords.remove(at: indexPath.item)
+                    collectionView.deleteItems(at: [indexPath])
+                }
                 return cell
             }
         }
     }
-    
+}
+
+//MARK: - UICollectionViewDelegate
+extension MainViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let itemIndex = indexPath.item
         
@@ -192,10 +198,16 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 mainCollectionView.reloadData()
             }
         } else {
-            let word = filteredWords[indexPath.item]
-            showAlert(word: word) { [unowned self] in
-                self.mainCollectionView.reloadItems(at: [indexPath])
-            }
+            let def = filteredWords[indexPath.item]
+            guard let word = def.name,
+                  let tranlation = def.translation else { return }
+
+            let newWordVC = NewWordViewController()
+            delegate = newWordVC
+            delegate?.receiveData(word: word, translation: tranlation)
+            
+            newWordVC.modalPresentationStyle = .popover
+            present(newWordVC, animated: true)
         }
     }
 }
@@ -210,25 +222,25 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-// MARK: - Alert Controller
-extension MainViewController {
-    private func showAlert(word: Word? = nil, completion: (() -> Void)? = nil) {
-        let title = word != nil ? "Update Word" : "New Word"
-        let alert = UIAlertController.createAlertController(withTitle: title)
-        
-        alert.action(word: word) { [weak self] wordName, translationName  in
-            if let word = word, let completion = completion {
-                StorageManager.shared.update(word, newName: wordName, newTranslation: translationName)
-                completion()
-            } else {
-                self?.save(wordName: wordName, translation: translationName)
-            }
-        }
-        present(alert, animated: true)
-    }
-}
+//// MARK: - Alert Controller
+//extension MainViewController {
+//    private func showAlert(word: Word? = nil, completion: (() -> Void)? = nil) {
+//        let title = word != nil ? "Update Word" : "New Word"
+//        let alert = UIAlertController.createAlertController(withTitle: title)
+//
+//        alert.action(word: word) { [weak self] wordName, translationName  in
+//            if let word = word, let completion = completion {
+//                StorageManager.shared.update(word, newName: wordName, newTranslation: translationName)
+//                completion()
+//            } else {
+//                self?.save(wordName: wordName, translation: translationName)
+//            }
+//        }
+//        present(alert, animated: true)
+//    }
+//}
 
-//MARK: - setup UI
+//MARK: - Setup UI
 extension MainViewController {
     private func setNavigationBar() {
         let navBarAppearance = UINavigationBarAppearance()
@@ -244,16 +256,13 @@ extension MainViewController {
         view.addSubview(mainCollectionView)
         view.addSubview(menuCollectionView)
         
+        mainCollectionView.pinEdgesToSuperView()
+        
         NSLayoutConstraint.activate([
             menuCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             menuCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             menuCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            menuCollectionView.heightAnchor.constraint(equalToConstant: view.frame.width / 6),
-            
-            mainCollectionView.topAnchor.constraint(equalTo: menuCollectionView.topAnchor),
-            mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mainCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            menuCollectionView.heightAnchor.constraint(equalToConstant: view.frame.width / 6)
         ])
     }
     
@@ -270,6 +279,7 @@ extension MainViewController {
                 
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 group.contentInsets = .init(top: 70, leading: 0, bottom: 0, trailing: 0)
+                
                 let section = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .groupPagingCentered
                 section.interGroupSpacing = 10
@@ -284,7 +294,8 @@ extension MainViewController {
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-                group.contentInsets = .init(top: 0, leading: 20, bottom: 0, trailing: 20)
+                group.contentInsets = .init(top: 20, leading: 24, bottom: 0, trailing: 24)
+                
                 let section = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .none
                 section.interGroupSpacing = 10
@@ -303,19 +314,6 @@ extension MainViewController {
     }
 }
 
-//MARK: - SwipeableCollectionViewCellDelegate
-extension MainViewController: SwipeableCollectionViewCellDelegate {
-    func hiddenContainerViewTapped(inCell cell: UICollectionViewCell) {
-        guard let indexPath = mainCollectionView.indexPath(for: cell) else { return }
-        let word = myWords[indexPath.item]
-        myWords.remove(at: indexPath.item)
-        StorageManager.shared.delete(word)
-        mainCollectionView.performBatchUpdates({
-            self.mainCollectionView.deleteItems(at: [indexPath])
-        })
-    }
-}
-
 //MARK: - HeaderCollectionReusableViewDelegate
 extension MainViewController: HeaderCollectionReusableViewDelegate {
     func goToTestViewController() {
@@ -324,14 +322,7 @@ extension MainViewController: HeaderCollectionReusableViewDelegate {
     }
     
     func addNewWord() {
-        showAlert()
-    }
-}
-
-//MARK: - UISearchControllerDelegate
-extension MainViewController: UISearchControllerDelegate {
-    func presentSearchController(_ searchController: UISearchController) {
-        searchController.showsSearchResultsController = true
+//        bshowAlert()
     }
 }
 

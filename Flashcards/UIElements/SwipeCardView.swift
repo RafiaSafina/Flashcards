@@ -22,6 +22,7 @@ class SwipeCardView: UIView {
         let pan = UIPanGestureRecognizer(target: self, action: #selector(didPan))
         return pan
     }()
+
     
     private lazy var frontView: UIView = {
         let view = UIView()
@@ -37,7 +38,6 @@ class SwipeCardView: UIView {
     }()
     
     private let wordLabel = WordLabel()
-    
     private let translationLabel = TranslationLabel()
     
     override init(frame: CGRect) {
@@ -47,7 +47,7 @@ class SwipeCardView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.String.initError)
     }
     
     @objc private func didPan() {
@@ -61,7 +61,7 @@ class SwipeCardView: UIView {
         
         switch panGesture.state {
         case .ended:
-            if (card.center.x) > 400 {
+            if card.center.x > 400 {
                 delegate?.swipeDidEnd(on: card)
 
                 swipe(card: card,
@@ -119,20 +119,14 @@ extension SwipeCardView {
         super.layoutSubviews()
         addSubview(frontView)
         addSubview(backView)
+        
         frontView.addSubview(wordLabel)
-        backView.addSubview(translationLabel)
+        frontView.addSubview(translationLabel)
+        
+        frontView.pinEdgesToSuperView()
+        backView.pinEdgesToSuperView()
         
         NSLayoutConstraint.activate([
-            frontView.topAnchor.constraint(equalTo: topAnchor),
-            frontView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            frontView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            frontView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
-            backView.topAnchor.constraint(equalTo: topAnchor),
-            backView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            backView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            backView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
             translationLabel.centerXAnchor.constraint(equalTo: backView.centerXAnchor),
             translationLabel.centerYAnchor.constraint(equalTo: backView.centerYAnchor),
             
@@ -140,4 +134,5 @@ extension SwipeCardView {
             wordLabel.centerYAnchor.constraint(equalTo: frontView.centerYAnchor)
         ])
     }
+
 }
