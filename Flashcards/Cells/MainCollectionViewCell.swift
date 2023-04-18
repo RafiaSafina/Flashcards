@@ -26,7 +26,10 @@ final class MainCollectionViewCell: UICollectionViewCell {
         return gesture
     }()
     
-    private let cellView = StaticCardView()
+    private let cellView = CardView()
+    
+    private let wordLabel = WordLabel()
+    private let translationLabel = TranslationLabel()
     
     private lazy var deleteButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -79,7 +82,8 @@ final class MainCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(word: String, translation: String) {
-        cellView.configure(word: word, translation: translation)
+        wordLabel.text = word
+        translationLabel.text = translation
     }
 }
 
@@ -88,12 +92,20 @@ extension MainCollectionViewCell {
     private func setupSubviews() {
         contentView.addSubview(cellView)
         contentView.insertSubview(deleteButton, belowSubview: cellView)
+        cellView.addSubview(wordLabel)
+        cellView.addSubview(translationLabel)
         
         cellView.pinEdgesToSuperView()
         
         NSLayoutConstraint.activate([
             deleteButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -contentView.frame.width / 5)
+            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -contentView.frame.width / 5),
+            
+            wordLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
+            wordLabel.topAnchor.constraint(equalTo: cellView.topAnchor, constant: 20),
+            
+            translationLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
+            translationLabel.topAnchor.constraint(equalTo: wordLabel.bottomAnchor, constant: 20)
         ])
     }
 }

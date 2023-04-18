@@ -7,15 +7,3 @@
 
 import Foundation
 
-protocol MainViewProtocol: AnyObject {
-    func success()
-    func failure(error: Error)
-}
-
-protocol MainViewPresenterProtocol: AnyObject {
-    
-}
-
-class MainPresenter: MainViewPresenterProtocol {
-    
-}

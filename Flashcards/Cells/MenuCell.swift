@@ -9,7 +9,7 @@ import UIKit
 
 final class MenuCell: UICollectionViewCell {
     
-    private lazy var label: UILabel = {
+    private lazy var categoryLabel: UILabel = {
         let label = UILabel()
         label.configureLabel(fontWight: .heavy)
         return label
@@ -26,24 +26,24 @@ final class MenuCell: UICollectionViewCell {
     
     override var isSelected: Bool {
         didSet {
-            label.textColor = isSelected
+            categoryLabel.textColor = isSelected
             ? .systemPink.withAlphaComponent(0.3)
             : .black
         }
     }
     
     func configure(text: String) {
-        label.text = text
+        categoryLabel.text = text
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        addSubview(label)
+        addSubview(categoryLabel)
         
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            label.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
-            label.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
+            categoryLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            categoryLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
+            categoryLabel.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 }

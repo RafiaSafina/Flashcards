@@ -11,21 +11,16 @@ final class CardsCollectionViewCell: UICollectionViewCell {
 
     private var isFlipped = true
     
-    private lazy var frontCellView: UIView = {
-        let view = UIView()
-        view.configureBaseView()
-        return view
-    }()
+    private lazy var frontCellView = CardView()
     
-    private lazy var backCellView: UIView = {
-        let view = UIView()
-        view.configureBaseView()
+    private lazy var backCellView: CardView = {
+        let view = CardView()
         view.isHidden = true
         return view
     }()
 
-    private let translationLabel = TranslationLabel()
     private let wordLabel = WordLabel()
+    private let translationLabel = TranslationLabel()
     
     private lazy var singleTapGesture: UITapGestureRecognizer = {
         let tap = UITapGestureRecognizer(target: self, action: #selector(flip))
@@ -66,6 +61,7 @@ final class CardsCollectionViewCell: UICollectionViewCell {
 extension CardsCollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
+        
         contentView.addSubview(frontCellView)
         contentView.addSubview(backCellView)
         frontCellView.addSubview(wordLabel)

@@ -7,10 +7,8 @@
 
 import Foundation
 
-enum NetworkError: Error {
-    case invalidURL
-    case noData
-    case decodingError
+protocol NetworkManagerProtocol {
+    func fetchData(text: String, completion: @escaping (Result<DictWord, NetworkError>) -> Void)
 }
 
 class NetworkManager {

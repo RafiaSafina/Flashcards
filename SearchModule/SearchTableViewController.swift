@@ -12,6 +12,9 @@ class ResultViewController: UITableViewController {
     private var items: [String] = []
     private var words: [DictWord] = []
     
+    
+    weak var delegate: PassDataDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.ReuseIdentifiers.searchCell)
@@ -39,14 +42,18 @@ class ResultViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        tableView.deselectRow(at: indexPath, animated: true)
-//
-//        let def = words[indexPath.row].def[0]
-//
-//        let newWordVC = NewWordViewController()
-//        newWordVC.dictWord = def
-//
-//        show(newWordVC, sender: nil)
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        let def = words[indexPath.row].def[0]
+        let word = def.text
+        let tr = def.tr[0].text
+
+        let newWordVC = NewWordViewController()
+        delegate = newWordVC
+        delegate?.receiveData(word: word, translation: tr)
+        
+        newWordVC.modalPresentationStyle = .popover
+        present(newWordVC, animated: true)
     }
 }
 

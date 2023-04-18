@@ -30,9 +30,7 @@ final class MainViewController: UIViewController {
     private var dictionaryWords: [Word] = []
     private var filteredWords: [Word] = []
     
-    private var allWords: [Word] {
-        myWords + dictionaryWords
-    }
+    private var allWords: [Word] = [] // fetched anf filled
     
     private var isFlipped = true
     
@@ -78,6 +76,7 @@ final class MainViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         fetchData()
+        filteredWords = allWords
         setNavigationBar()
         setLayout()
         setCellSelected()
@@ -89,7 +88,6 @@ final class MainViewController: UIViewController {
         menuCollectionView.selectItem(at: indexPath,
                                       animated: true,
                                       scrollPosition: .bottom)
-        TemporaryData.testWords = allWords
     }
 }
 
@@ -99,7 +97,7 @@ extension MainViewController {
         StorageManager.shared.fetchData { [unowned self] result in
             switch result {
             case .success(let words):
-                    self.filteredWords = words
+                    self.allWords = words
             case .failure(let error):
                 print(error.localizedDescription)
             }
@@ -185,15 +183,12 @@ extension MainViewController: UICollectionViewDelegate {
         if collectionView == menuCollectionView {
             switch itemIndex {
             case 0:
-                TemporaryData.testWords = allWords
                 filteredWords = allWords
                 mainCollectionView.reloadData()
             case 1:
-                TemporaryData.testWords = myWords
                 filteredWords = myWords
                 mainCollectionView.reloadData()
             default:
-                TemporaryData.testWords = dictionaryWords
                 filteredWords = dictionaryWords
                 mainCollectionView.reloadData()
             }
@@ -221,24 +216,6 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
         return CGSize()
     }
 }
-
-//// MARK: - Alert Controller
-//extension MainViewController {
-//    private func showAlert(word: Word? = nil, completion: (() -> Void)? = nil) {
-//        let title = word != nil ? "Update Word" : "New Word"
-//        let alert = UIAlertController.createAlertController(withTitle: title)
-//
-//        alert.action(word: word) { [weak self] wordName, translationName  in
-//            if let word = word, let completion = completion {
-//                StorageManager.shared.update(word, newName: wordName, newTranslation: translationName)
-//                completion()
-//            } else {
-//                self?.save(wordName: wordName, translation: translationName)
-//            }
-//        }
-//        present(alert, animated: true)
-//    }
-//}
 
 //MARK: - Setup UI
 extension MainViewController {
@@ -322,8 +299,17 @@ extension MainViewController: HeaderCollectionReusableViewDelegate {
     }
     
     func addNewWord() {
-//        bshowAlert()
+        let newWordVC = NewWordViewController()
+        delegate = newWordVC
+        delegate?.receiveData(word: "", translation: "")
+        newWordVC.modalPresentationStyle = .popover
+        present(newWordVC, animated: true)
     }
+}
+
+//MARK: - MainViewProtocol
+extension MainViewController: MainViewProtocol {
+    
 }
 
 

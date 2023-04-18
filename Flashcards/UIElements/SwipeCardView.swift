@@ -12,7 +12,6 @@ class SwipeCardView: UIView {
     var dataSourse: Word? {
         didSet {
             wordLabel.text = dataSourse?.name
-            translationLabel.text = dataSourse?.translation
         }
     }
     
@@ -24,21 +23,9 @@ class SwipeCardView: UIView {
     }()
 
     
-    private lazy var frontView: UIView = {
-        let view = UIView()
-        view.configureBaseView()
-        return view
-    }()
-    
-    private lazy var backView: UIView = {
-        let view = UIView()
-        view.isHidden = true
-        view.configureBaseView()
-        return view
-    }()
-    
+    private lazy var frontView = CardView()
     private let wordLabel = WordLabel()
-    private let translationLabel = TranslationLabel()
+ 
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -118,21 +105,13 @@ extension SwipeCardView {
     override func layoutSubviews() {
         super.layoutSubviews()
         addSubview(frontView)
-        addSubview(backView)
-        
         frontView.addSubview(wordLabel)
-        frontView.addSubview(translationLabel)
         
         frontView.pinEdgesToSuperView()
-        backView.pinEdgesToSuperView()
         
         NSLayoutConstraint.activate([
-            translationLabel.centerXAnchor.constraint(equalTo: backView.centerXAnchor),
-            translationLabel.centerYAnchor.constraint(equalTo: backView.centerYAnchor),
-            
             wordLabel.centerXAnchor.constraint(equalTo: frontView.centerXAnchor),
             wordLabel.centerYAnchor.constraint(equalTo: frontView.centerYAnchor)
         ])
     }
-
 }

@@ -7,9 +7,15 @@
 
 import CoreData
 
-final class StorageManager {
+protocol StorageManagerProtocol: AnyObject {
+    func create(_ wordName: String, translation: String, completion: (Word) -> Void)
+    func fetchData(completion: (Result<[Word], Error>) -> Void)
+    func update(_ word: Word, newName: String, newTranslation: String)
+    func updateStatus(_ word: Word, isLearnt: Bool)
+    func delete(_ word: Word)
+}
 
-    static let shared = StorageManager()
+final class StorageManager: StorageManagerProtocol {
     
     // MARK: - Core Data stack
     private let persistentContainer: NSPersistentContainer = {
@@ -48,17 +54,6 @@ final class StorageManager {
             completion(.failure(error))
         }
     }
-    
-//    func fetchTestWords(completion: (Result<[TestWords], Error>) -> Void) {
-//        let fetchRequest = TestWords.fetchRequest()
-//        
-//        do {
-//            let testWords = try viewContext.fetch(fetchRequest)
-//            completion(.success(testWords))
-//        } catch let error {
-//            completion(.failure(error))
-//        }
-//    }
     
     func update(_ word: Word, newName: String, newTranslation: String) {
         word.name = newName
