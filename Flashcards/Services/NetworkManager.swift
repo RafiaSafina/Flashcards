@@ -11,11 +11,7 @@ protocol NetworkManagerProtocol {
     func fetchData(text: String, completion: @escaping (Result<DictWord, NetworkError>) -> Void)
 }
 
-class NetworkManager {
-    
-    static let shared = NetworkManager()
-    
-    private init() {}
+class NetworkManager: NetworkManagerProtocol {
     
     let key = "dict.1.1.20230405T122803Z.d3e168049561cfc7.842b40383d8e77ebd82988b5bef7eb27165a7807"
     

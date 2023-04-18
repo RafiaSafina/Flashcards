@@ -16,7 +16,7 @@ protocol StorageManagerProtocol: AnyObject {
 }
 
 final class StorageManager: StorageManagerProtocol {
-    
+
     // MARK: - Core Data stack
     private let persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "WordModel")
@@ -30,7 +30,7 @@ final class StorageManager: StorageManagerProtocol {
     
     private let viewContext: NSManagedObjectContext
     
-    private init() {
+    init() {
         viewContext = persistentContainer.viewContext
     }
     

@@ -31,7 +31,10 @@
 		6C2B977629EED2F9003092C2 /* TranslationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B977529EED2F9003092C2 /* TranslationLabel.swift */; };
 		6C2B977829EED34D003092C2 /* UILabel Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B977729EED34D003092C2 /* UILabel Ext.swift */; };
 		6C2B977A29EED384003092C2 /* UIView Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B977929EED384003092C2 /* UIView Ext.swift */; };
-		6C4D489F29E05BFE00885F57 /* CategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4D489E29E05BFE00885F57 /* CategoryModel.swift */; };
+		6C2B977C29EEF57D003092C2 /* Builder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B977B29EEF57D003092C2 /* Builder.swift */; };
+		6C2B977E29EF1AA2003092C2 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B977D29EF1AA2003092C2 /* Router.swift */; };
+		6C2B978029EF1ABC003092C2 /* NewWordPresenter .swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B977F29EF1ABC003092C2 /* NewWordPresenter .swift */; };
+		6C2B978229EF1EFC003092C2 /* SearchPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B978129EF1EFC003092C2 /* SearchPresenter.swift */; };
 		6C4D48A529E0654B00885F57 /* WordModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6C4D48A329E0654B00885F57 /* WordModel.xcdatamodeld */; };
 		6C4D48A929E58F1800885F57 /* MainPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4D48A829E58F1800885F57 /* MainPresenter.swift */; };
 		6C4D48AE29E58FCD00885F57 /* TestPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C4D48AD29E58FCD00885F57 /* TestPresenter.swift */; };
@@ -64,7 +67,10 @@
 		6C2B977529EED2F9003092C2 /* TranslationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationLabel.swift; sourceTree = "<group>"; };
 		6C2B977729EED34D003092C2 /* UILabel Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel Ext.swift"; sourceTree = "<group>"; };
 		6C2B977929EED384003092C2 /* UIView Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView Ext.swift"; sourceTree = "<group>"; };
-		6C4D489E29E05BFE00885F57 /* CategoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryModel.swift; sourceTree = "<group>"; };
+		6C2B977B29EEF57D003092C2 /* Builder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Builder.swift; sourceTree = "<group>"; };
+		6C2B977D29EF1AA2003092C2 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		6C2B977F29EF1ABC003092C2 /* NewWordPresenter .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewWordPresenter .swift"; sourceTree = "<group>"; };
+		6C2B978129EF1EFC003092C2 /* SearchPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPresenter.swift; sourceTree = "<group>"; };
 		6C4D48A429E0654B00885F57 /* WordModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WordModel.xcdatamodel; sourceTree = "<group>"; };
 		6C4D48A829E58F1800885F57 /* MainPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPresenter.swift; sourceTree = "<group>"; };
 		6C4D48AD29E58FCD00885F57 /* TestPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPresenter.swift; sourceTree = "<group>"; };
@@ -140,6 +146,8 @@
 			children = (
 				6C214A4C29CD479200540AF6 /* StorageManager.swift */,
 				6C214A8329DCB8FD00540AF6 /* NetworkManager.swift */,
+				6C2B977B29EEF57D003092C2 /* Builder.swift */,
+				6C2B977D29EF1AA2003092C2 /* Router.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -148,7 +156,6 @@
 			isa = PBXGroup;
 			children = (
 				6C2B976529E773EB003092C2 /* DictWordModel.swift */,
-				6C4D489E29E05BFE00885F57 /* CategoryModel.swift */,
 				6C4D48A329E0654B00885F57 /* WordModel.xcdatamodeld */,
 			);
 			path = Models;
@@ -180,6 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				6C2B976229E75DBC003092C2 /* NewWordViewController.swift */,
+				6C2B977F29EF1ABC003092C2 /* NewWordPresenter .swift */,
 			);
 			path = NewWordsModule;
 			sourceTree = "<group>";
@@ -188,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				6C2B976729E899D4003092C2 /* SearchTableViewController.swift */,
+				6C2B978129EF1EFC003092C2 /* SearchPresenter.swift */,
 			);
 			path = SearchModule;
 			sourceTree = "<group>";
@@ -294,6 +303,7 @@
 			files = (
 				6C214A8429DCB8FD00540AF6 /* NetworkManager.swift in Sources */,
 				6C4D48A929E58F1800885F57 /* MainPresenter.swift in Sources */,
+				6C2B978229EF1EFC003092C2 /* SearchPresenter.swift in Sources */,
 				6C2B976829E899D4003092C2 /* SearchTableViewController.swift in Sources */,
 				6C214A3A29C28EEE00540AF6 /* MenuCell.swift in Sources */,
 				6C214A7B29D63B3900540AF6 /* WordLabel.swift in Sources */,
@@ -303,11 +313,12 @@
 				6C2B977A29EED384003092C2 /* UIView Ext.swift in Sources */,
 				6C214A1C29BEA65E00540AF6 /* AppDelegate.swift in Sources */,
 				6C214A6F29D2669000540AF6 /* HeaderCollectionReusableView.swift in Sources */,
-				6C4D489F29E05BFE00885F57 /* CategoryModel.swift in Sources */,
 				6C214A3629BEFBA400540AF6 /* MainCollectionViewCell.swift in Sources */,
 				6C2B976629E773EB003092C2 /* DictWordModel.swift in Sources */,
+				6C2B978029EF1ABC003092C2 /* NewWordPresenter .swift in Sources */,
 				6C2B977429EEC961003092C2 /* CardView.swift in Sources */,
 				6C2B976329E75DBC003092C2 /* NewWordViewController.swift in Sources */,
+				6C2B977C29EEF57D003092C2 /* Builder.swift in Sources */,
 				6C2B977629EED2F9003092C2 /* TranslationLabel.swift in Sources */,
 				6C214A1E29BEA65E00540AF6 /* SceneDelegate.swift in Sources */,
 				6C214A6729CFF4A000540AF6 /* TestViewController.swift in Sources */,
@@ -315,6 +326,7 @@
 				6C214A7129D3807600540AF6 /* SwipeCardView.swift in Sources */,
 				6C2B977829EED34D003092C2 /* UILabel Ext.swift in Sources */,
 				6C4D48AE29E58FCD00885F57 /* TestPresenter.swift in Sources */,
+				6C2B977E29EF1AA2003092C2 /* Router.swift in Sources */,
 				6C214A7929D62CCF00540AF6 /* UITextField Ext.swift in Sources */,
 				6C214A7729D51D2A00540AF6 /* StackContainerView.swift in Sources */,
 				6C214A4D29CD479200540AF6 /* StorageManager.swift in Sources */,

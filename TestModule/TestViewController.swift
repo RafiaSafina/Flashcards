@@ -18,7 +18,11 @@ protocol SwipeCardsDataSource: AnyObject {
 
 class TestViewController: UIViewController {
     
-    private var wordsToLearn: [Word] = []
+    var presenter: TestPresenterProtocol
+    
+    private var wordsToLearn: [Word] {
+        presenter.words ?? []
+    }
     
     private lazy var totalWords = wordsToLearn.count
     private var previousWordsCount = 0
@@ -44,18 +48,19 @@ class TestViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        wordsToLearn = filterData()
         setupLayout()
         setupNavigationBar()
         view.backgroundColor = .white
         stackContainerView.dataSource = self
     }
     
-    private func filterData() -> [Word] {
-        let wordsToLearn = TemporaryData.testWords.filter { word in
-           word.isLearnt == false
-        }
-        return wordsToLearn
+    init(presenter: TestPresenterProtocol) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     @objc private func backToRoot() {
@@ -116,7 +121,7 @@ extension TestViewController: SwipeCardsDataSource {
     }
     
     func update(word: Word, isLearnt: Bool) {
-        StorageManager.shared.updateStatus(word, isLearnt: isLearnt)
+        presenter.saveWord(word: word, isLearnt: isLearnt)
     }
     
     func numberOfCardsToShow() -> Int {
@@ -128,5 +133,10 @@ extension TestViewController: SwipeCardsDataSource {
         card.dataSourse = wordsToLearn[index]
         return card
     }
+}
+
+//MARK: - TestViewProtocol
+extension TestViewController: TestViewProtocol {
+    
 }
 

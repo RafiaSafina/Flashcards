@@ -7,18 +7,30 @@
 
 import UIKit
 
-class ResultViewController: UITableViewController {
+class SearchViewController: UITableViewController {
     
     private var items: [String] = []
     private var words: [DictWord] = []
     
-    
-    weak var delegate: PassDataDelegate?
-    
+    var presenter: SearchPresenterProtocol
+
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.ReuseIdentifiers.searchCell)
         view.backgroundColor = .white
+    }
+    
+    override convenience init(style: UITableView.Style) {
+        self.init(style: style)
+    }
+    
+    init(presenter: SearchPresenterProtocol) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -48,45 +60,36 @@ class ResultViewController: UITableViewController {
         let word = def.text
         let tr = def.tr[0].text
 
-        let newWordVC = NewWordViewController()
-        delegate = newWordVC
-        delegate?.receiveData(word: word, translation: tr)
-        
-        newWordVC.modalPresentationStyle = .popover
-        present(newWordVC, animated: true)
+        presenter.didTapOnCell()
+        presenter.receiveData(word: word, translation: tr)
     }
 }
 
 //MARK: - UISearchResultsUpdating
-extension ResultViewController: UISearchResultsUpdating {
+extension SearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
-        guard let resultController = searchController.searchResultsController as? ResultViewController else { return }
+        guard let resultController = searchController.searchResultsController as? SearchViewController else { return }
         
-        NetworkManager.shared.fetchData(text: text) { [unowned self] result in
-            switch result {
-            case .success(let word):
-                if !word.def.isEmpty {
-                    let text = word.def[0].text
-                    if text.count > resultController.items.last?.count ?? 0 {
-                        words.append(word)
-                        resultController.items.append(text)
-                        resultController.tableView.reloadData()
-                    } else {
-                        words.removeLast()
-                        resultController.items.removeLast()
-                        resultController.tableView.reloadData()
-                    }
+        presenter.fetchData(text: text) { [unowned self] word in
+            if !word.def.isEmpty {
+                let text = word.def[0].text
+                if text.count > resultController.items.last?.count ?? 0 {
+                    self.words.append(word)
+                    resultController.items.append(text)
+                    resultController.tableView.reloadData()
+                } else {
+                    self.words.removeLast()
+                    resultController.items.removeLast()
+                    resultController.tableView.reloadData()
                 }
-            case .failure(let error):
-                print(error.localizedDescription)
             }
         }
     }
 }
 
 //MARK: - UISearchBarDelegate
-extension ResultViewController: UISearchBarDelegate {
+extension SearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
             items.removeAll()
@@ -94,5 +97,9 @@ extension ResultViewController: UISearchBarDelegate {
             tableView.reloadData()
         }
     }
+}
+//MARK: - ResultViewProtocol
+extension SearchViewController: SearchViewProtocol {
+  
 }
 

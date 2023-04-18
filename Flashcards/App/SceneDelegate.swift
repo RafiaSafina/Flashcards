@@ -17,7 +17,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.makeKeyAndVisible()
         
-        window?.rootViewController = UINavigationController(rootViewController: MainViewController())
+        let builder: BuilderProtocol = Builder()
+        let mainVC = UIViewController()
+        let searchVC = UITableViewController()
+        let newWordVC = UIViewController()
+        let learnVC = UIViewController()
+        let rootVC = UINavigationController(rootViewController: mainVC)
+        
+        _ = Router(builder: builder, rootViewController: rootVC, newWordViewController: newWordVC, testViewController: learnVC, searchViewController: searchVC)
+        
+        window?.rootViewController = rootVC
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -43,7 +52,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
-        StorageManager.shared.saveContext()
+      
     }
 }
 

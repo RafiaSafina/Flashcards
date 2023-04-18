@@ -20,9 +20,9 @@ protocol SearchTableViewCellDelegate: AnyObject {
     func setSearchText() -> String
 }
 
-final class MainViewController: UIViewController {
+class MainViewController: UIViewController {
     
-    weak var delegate: PassDataDelegate?
+    var presenter: MainPresenterProtocol
     
     private var categories = TemporaryData.categories
     
@@ -30,18 +30,20 @@ final class MainViewController: UIViewController {
     private var dictionaryWords: [Word] = []
     private var filteredWords: [Word] = []
     
-    private var allWords: [Word] = [] // fetched anf filled
+    private var allWords: [Word] {
+        presenter.words ?? []
+    }
     
     private var isFlipped = true
     
-    private let resultController = ResultViewController(style: .plain)
+    private let searchResultController = SearchViewController(style: .plain)
     
     private lazy var searchController: UISearchController = {
-        let searchController = UISearchController(searchResultsController: resultController)
+        let searchController = UISearchController(searchResultsController: searchResultController)
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.searchTextField.borderStyle = .roundedRect
-        searchController.searchResultsUpdater = resultController
-        searchController.searchBar.delegate = resultController
+        searchController.searchBar.delegate = searchResultController
+        searchController.searchResultsUpdater = searchResultController
         searchController.searchBar.searchBarStyle = .prominent
         searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: Constants.String.searchBarPlaceholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
         return searchController
@@ -72,10 +74,18 @@ final class MainViewController: UIViewController {
         return cv
     }()
     
+    init(presenter: MainPresenterProtocol) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        fetchData()
         filteredWords = allWords
         setNavigationBar()
         setLayout()
@@ -88,28 +98,6 @@ final class MainViewController: UIViewController {
         menuCollectionView.selectItem(at: indexPath,
                                       animated: true,
                                       scrollPosition: .bottom)
-    }
-}
-
-//MARK: - StorageManager
-extension MainViewController {
-    private func fetchData() {
-        StorageManager.shared.fetchData { [unowned self] result in
-            switch result {
-            case .success(let words):
-                    self.allWords = words
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    private func save(wordName: String, translation: String) {
-        StorageManager.shared.create(wordName, translation: translation) { [unowned self] word in
-            myWords.append(word)
-            filteredWords.append(word)
-            mainCollectionView.insertItems(at: [IndexPath(item: filteredWords.count - 1, section: 0)])
-        }
     }
 }
     
@@ -165,7 +153,7 @@ extension MainViewController: UICollectionViewDataSource {
                 
                 cell.configure(word: name, translation: translation)
                 cell.deleteHandler = { [weak self] in
-                    StorageManager.shared.delete(word)
+                    self?.presenter.didSwipeToDelete(word: word)
                     self?.filteredWords.remove(at: indexPath.item)
                     collectionView.deleteItems(at: [indexPath])
                 }
@@ -196,13 +184,9 @@ extension MainViewController: UICollectionViewDelegate {
             let def = filteredWords[indexPath.item]
             guard let word = def.name,
                   let tranlation = def.translation else { return }
-
-            let newWordVC = NewWordViewController()
-            delegate = newWordVC
-            delegate?.receiveData(word: word, translation: tranlation)
             
-            newWordVC.modalPresentationStyle = .popover
-            present(newWordVC, animated: true)
+            presenter.goToNewWord()
+            presenter.receiveData(word: word, translation: tranlation)
         }
     }
 }
@@ -294,16 +278,11 @@ extension MainViewController {
 //MARK: - HeaderCollectionReusableViewDelegate
 extension MainViewController: HeaderCollectionReusableViewDelegate {
     func goToTestViewController() {
-        let cardsVC = TestViewController()
-        navigationController?.pushViewController(cardsVC, animated: true)
+        presenter.learnButtonTapped()
     }
     
     func addNewWord() {
-        let newWordVC = NewWordViewController()
-        delegate = newWordVC
-        delegate?.receiveData(word: "", translation: "")
-        newWordVC.modalPresentationStyle = .popover
-        present(newWordVC, animated: true)
+        presenter.goToNewWord()
     }
 }
 

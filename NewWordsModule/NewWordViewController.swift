@@ -13,8 +13,7 @@ protocol PassDataDelegate: AnyObject {
 
 class NewWordViewController: UIViewController {
     
-    private var word: String?
-    private var translation: String?
+    var presenter: NewWordPresenterProtocol
     
     private var isHidden: Bool?
     
@@ -69,7 +68,15 @@ class NewWordViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .clear
         setupLayout()
-        configure()
+    }
+    
+    init(presenter: NewWordPresenterProtocol) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     @objc private func favoriteButtonTapped() {
@@ -82,12 +89,6 @@ class NewWordViewController: UIViewController {
     
     @objc private func saveButtonTapped() {
         print("save")
-    }
-    
-    private func configure() {
-        guard let word = word, let translation = translation else { return }
-        wordTF.text = word
-        translationTF.text = translation
     }
     
     private func toggleVisibility() {
@@ -119,9 +120,9 @@ class NewWordViewController: UIViewController {
     }
 }
 
-extension NewWordViewController: PassDataDelegate {
-    func receiveData(word: String?, translation: String?) {
-        self.word = word
-        self.translation = translation
+extension NewWordViewController: NewWordViewProtocol {
+    func configure(word: String, translation: String) {
+        wordTF.text = word
+        translationTF.text = translation
     }
 }
