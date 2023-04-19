@@ -6,22 +6,27 @@
 //
 
 import UIKit
- 
-protocol PassDataDelegate: AnyObject {
-    func receiveData(word: String?, translation: String?)
+
+protocol ReloadDataDelegate: AnyObject {
+    func reloadData()
 }
 
 class NewWordViewController: UIViewController {
     
     var presenter: NewWordPresenterProtocol
     
+    weak var delegate: ReloadDataDelegate?
+    
     private var isHidden: Bool?
     
     private let cardView = CardView()
     
-    private let wordTF: UITextField = {
-        let tf = UITextField()
+    private lazy var wordTF: UITextField = {
+        let tf = UITextField(frame: CGRect(x: 0, y: 0, width: cardView.frame.width, height: 20))
+        tf.sizeToFit()
+        tf.translatesAutoresizingMaskIntoConstraints = false
         tf.configureTF(fontWeight: .bold)
+        tf.becomeFirstResponder()
         return tf
     }()
     
@@ -29,6 +34,18 @@ class NewWordViewController: UIViewController {
         let tf = UITextField()
         tf.configureTF(fontWeight: .regular)
         return tf
+    }()
+    
+    private lazy var stackView: UIStackView = {
+        let stack = UIStackView()
+        stack.alignment = .leading
+        stack.axis = .vertical
+        stack.distribution = .fill
+        stack.spacing = 20
+        stack.addArrangedSubview(wordTF)
+        stack.addArrangedSubview(translationTF)
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
     }()
     
     private lazy var exitButton: UIButton = {
@@ -53,60 +70,49 @@ class NewWordViewController: UIViewController {
         return button
     }()
     
-    private lazy var favoriteButton: UIButton = {
-        let button = UIButton()
-        let image = UIImage(named: Constants.Images.heart)
-        image?.withTintColor(.systemPink.withAlphaComponent(0.3))
-        button.tintColor = .systemRed
-        button.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpOutside)
-        button.setImage(image, for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
         setupLayout()
+        presenter.setWord()
     }
     
-    init(presenter: NewWordPresenterProtocol) {
+    init(presenter: NewWordPresenterProtocol, delegate: ReloadDataDelegate) {
         self.presenter = presenter
+        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    @objc private func favoriteButtonTapped() {
-        print("favorite")
-    }
+
     
     @objc private func goToRoot() {
         dismiss(animated: true)
     }
     
     @objc private func saveButtonTapped() {
-        print("save")
-    }
-    
-    private func toggleVisibility() {
-        
+        guard let word = wordTF.text, let translation = translationTF.text else { return }
+        presenter.update(newName: word, newTranslation: translation)
+        delegate?.reloadData()
+        presenter.goBackToRoot()
     }
     
     private func setupLayout() {
         view.addSubview(cardView)
+        cardView.addSubview(stackView)
         cardView.addSubview(exitButton)
         cardView.addSubview(saveButton)
-        cardView.addSubview(favoriteButton)
+
      
         NSLayoutConstraint.activate([
-            favoriteButton.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 10),
-            favoriteButton.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -10),
-            
             exitButton.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 20),
             exitButton.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 20),
+            
+            stackView.centerYAnchor.constraint(equalTo: cardView.centerYAnchor),
+            stackView.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -20),
             
             saveButton.centerXAnchor.constraint(equalTo: cardView.centerXAnchor),
             saveButton.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -20),
@@ -121,8 +127,12 @@ class NewWordViewController: UIViewController {
 }
 
 extension NewWordViewController: NewWordViewProtocol {
-    func configure(word: String, translation: String) {
-        wordTF.text = word
-        translationTF.text = translation
+    func reloadData() {
+       
+    }
+    
+    func setWord(word: Word) {
+        wordTF.text = word.name
+        translationTF.text = word.translation
     }
 }

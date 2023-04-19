@@ -16,10 +16,6 @@ protocol HeaderCollectionReusableViewDelegate: AnyObject {
     func addNewWord()
 }
 
-protocol SearchTableViewCellDelegate: AnyObject {
-    func setSearchText() -> String
-}
-
 class MainViewController: UIViewController {
     
     var presenter: MainPresenterProtocol
@@ -80,7 +76,7 @@ class MainViewController: UIViewController {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.String.initError)
     }
     
     override func viewDidLoad() {
@@ -181,12 +177,8 @@ extension MainViewController: UICollectionViewDelegate {
                 mainCollectionView.reloadData()
             }
         } else {
-            let def = filteredWords[indexPath.item]
-            guard let word = def.name,
-                  let tranlation = def.translation else { return }
-            
-            presenter.goToNewWord()
-            presenter.receiveData(word: word, translation: tranlation)
+            let word = filteredWords[indexPath.item]
+            presenter.goToMyWord(word: word, delegate: self)
         }
     }
 }
@@ -282,14 +274,18 @@ extension MainViewController: HeaderCollectionReusableViewDelegate {
     }
     
     func addNewWord() {
-        presenter.goToNewWord()
+        print("newWord")
     }
 }
 
-//MARK: - MainViewProtocol
 extension MainViewController: MainViewProtocol {
     
 }
 
+extension MainViewController: ReloadDataDelegate {
+    func reloadData() {
+        mainCollectionView.reloadData()
+    }
+}
 
 

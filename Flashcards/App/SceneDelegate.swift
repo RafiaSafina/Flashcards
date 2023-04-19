@@ -18,15 +18,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
         
         let builder: BuilderProtocol = Builder()
-        let mainVC = UIViewController()
-        let searchVC = UITableViewController()
-        let newWordVC = UIViewController()
-        let learnVC = UIViewController()
-        let rootVC = UINavigationController(rootViewController: mainVC)
+        let navController = UINavigationController()
         
-        _ = Router(builder: builder, rootViewController: rootVC, newWordViewController: newWordVC, testViewController: learnVC, searchViewController: searchVC)
+        let router = Router(builder: builder, navigationController: navController)
+        router.initialMainViewController()
         
-        window?.rootViewController = rootVC
+        window?.rootViewController =  navController
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

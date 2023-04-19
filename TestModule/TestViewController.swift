@@ -52,6 +52,7 @@ class TestViewController: UIViewController {
         setupNavigationBar()
         view.backgroundColor = .white
         stackContainerView.dataSource = self
+        print(wordsToLearn)
     }
     
     init(presenter: TestPresenterProtocol) {

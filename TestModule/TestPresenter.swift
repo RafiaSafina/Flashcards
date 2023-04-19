@@ -28,6 +28,7 @@ class TestPresenter: TestPresenterProtocol {
     init(router: RouterProtocol, storageManager: StorageManagerProtocol) {
         self.router = router
         self.storageManager = storageManager
+        fetchData()
     }
     
     func saveWord(word: Word, isLearnt: Bool) {
@@ -38,11 +39,10 @@ class TestPresenter: TestPresenterProtocol {
         storageManager?.fetchData(completion: { result in
             switch result {
             case .success(let words):
-                self.words = words
+                self.words = words.filter { $0.isLearnt == false }
             case .failure(let error):
                 print(error.localizedDescription)
             }
         })
     }
-    
 }

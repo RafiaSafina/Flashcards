@@ -10,9 +10,10 @@ import UIKit
 class SearchViewController: UITableViewController {
     
     private var items: [String] = []
+    
     private var words: [DictWord] = []
     
-    var presenter: SearchPresenterProtocol
+    var presenter: SearchPresenterProtocol?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,17 +21,17 @@ class SearchViewController: UITableViewController {
         view.backgroundColor = .white
     }
     
-    override convenience init(style: UITableView.Style) {
-        self.init(style: style)
-    }
-    
     init(presenter: SearchPresenterProtocol) {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
     
+    override init(style: UITableView.Style) {
+        super.init(style: style)
+    }
+    
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.String.initError)
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -56,12 +57,8 @@ class SearchViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let def = words[indexPath.row].def[0]
-        let word = def.text
-        let tr = def.tr[0].text
-
-        presenter.didTapOnCell()
-        presenter.receiveData(word: word, translation: tr)
+        let word = words[indexPath.row]
+        presenter?.didTapOnCell(word: word)
     }
 }
 
@@ -71,7 +68,8 @@ extension SearchViewController: UISearchResultsUpdating {
         guard let text = searchController.searchBar.text else { return }
         guard let resultController = searchController.searchResultsController as? SearchViewController else { return }
         
-        presenter.fetchData(text: text) { [unowned self] word in
+        presenter?.fetchData(text: text) { [unowned self] word in
+            print(word)
             if !word.def.isEmpty {
                 let text = word.def[0].text
                 if text.count > resultController.items.last?.count ?? 0 {
@@ -100,6 +98,6 @@ extension SearchViewController: UISearchBarDelegate {
 }
 //MARK: - ResultViewProtocol
 extension SearchViewController: SearchViewProtocol {
-  
+    
 }
 

@@ -15,29 +15,21 @@ protocol MainPresenterProtocol: AnyObject {
     var words: [Word]? { get set }
     func fetchData()
     func didSwipeToDelete(word: Word)
-    func goToNewWord()
-    func receiveData(word: String?, translation: String?)
+    func goToMyWord(word: Word, delegate: ReloadDataDelegate)
     func learnButtonTapped()
 }
 
 class MainPresenter: MainPresenterProtocol {
     
-    weak var delegate: PassDataDelegate?
-    
     weak var view: MainViewProtocol?
     let storageManager: StorageManagerProtocol?
     var router: RouterProtocol?
-    
     var words: [Word]?
-    
-    private var word: String? = nil
-    private var translation: String? = nil 
     
     init(storageManager: StorageManagerProtocol, router: RouterProtocol) {
         self.storageManager = storageManager
         self.router = router
         fetchData()
-        delegate = self
     }
     
     func fetchData() {
@@ -55,12 +47,8 @@ class MainPresenter: MainPresenterProtocol {
         storageManager?.delete(word)
     }
     
-    func goToNewWord() {
-        router?.showNewWord()
-    }
-    
-    func addButtonTapped() {
-        router?.showNewWord()
+    func goToMyWord(word: Word, delegate: ReloadDataDelegate) {
+        router?.showMyWord(word: word, delegate: delegate)
     }
     
     func learnButtonTapped() {
@@ -68,9 +56,4 @@ class MainPresenter: MainPresenterProtocol {
     }
 }
 
-extension MainPresenter: PassDataDelegate {
-    func receiveData(word: String?, translation: String?) {
-        self.word = word
-        self.translation = translation
-    }
-}
+
