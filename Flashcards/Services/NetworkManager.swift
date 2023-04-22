@@ -13,7 +13,7 @@ protocol NetworkManagerProtocol {
 
 class NetworkManager: NetworkManagerProtocol {
     
-    let key = "dict.1.1.20230405T122803Z.d3e168049561cfc7.842b40383d8e77ebd82988b5bef7eb27165a7807"
+    let key = Constants.String.key
     
     func fetchData(text: String, completion: @escaping (Result<DictWord, NetworkError>) -> Void) {
         guard let formatedQuery = text.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)  else { return }
@@ -25,8 +25,8 @@ class NetworkManager: NetworkManagerProtocol {
         URLSession.shared.dataTask(with: url) { data, _, error in
             guard let data = data else {
                 print(error?.localizedDescription ?? "No error description")
-                return }
-            
+                return
+            }
             let decoder = JSONDecoder()
             do {
                 let word = try decoder.decode(DictWord.self, from: data)

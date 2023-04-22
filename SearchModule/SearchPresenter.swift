@@ -8,17 +8,18 @@
 import Foundation
 
 protocol SearchViewProtocol: AnyObject {
-   
+    func success(word: DictWord)
 }
 
 protocol SearchPresenterProtocol: AnyObject {
-    func fetchData(text: String, completion: @escaping ((DictWord) -> Void))
+    var dictWords: [DictWord] { get set }
+    func fetchData(text: String)
     func didTapOnCell(word: DictWord)
 }
 
 class SearchPresenter: SearchPresenterProtocol {
     
-    var dictWord: DictWord?
+    var dictWords: [DictWord] = []
     
     weak var view: SearchViewProtocol?
     var router: RouterProtocol?
@@ -27,14 +28,14 @@ class SearchPresenter: SearchPresenterProtocol {
     init(networkManager: NetworkManagerProtocol, router: RouterProtocol) {
         self.networkManager = networkManager
         self.router = router
-        
     }
     
-    func fetchData(text: String, completion: @escaping ((DictWord) -> Void)) {
+    func fetchData(text: String) {
         networkManager.fetchData(text: text) { result in
             switch result {
             case .success(let word):
-                completion(word)
+//                self.dictWords.append(word)
+                self.view?.success(word: word)
             case .failure(let error):
                 print(error.localizedDescription)
             }
@@ -42,6 +43,6 @@ class SearchPresenter: SearchPresenterProtocol {
     }
     
     func didTapOnCell(word: DictWord) {
-        router?.showDictWord(word: word)
+        router?.goToDictWord(word: word)
     }
 }

@@ -30,7 +30,6 @@ final class CardsCollectionViewCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = .white
         contentView.addGestureRecognizer(singleTapGesture)
     }
 
@@ -39,7 +38,12 @@ final class CardsCollectionViewCell: UICollectionViewCell {
     }
 
     @objc private func flip() {
-        UIView.transition(with: contentView, duration: 1.0, options: isFlipped ? .transitionFlipFromBottom : .transitionFlipFromTop, animations:  { [unowned self] in
+        UIView.transition(
+            with: contentView,
+            duration: 1.0,
+            options: isFlipped ? .transitionFlipFromBottom : .transitionFlipFromTop,
+            animations:  { [unowned self] in
+                
             frontCellView.isHidden = !frontCellView.isHidden
             backCellView.isHidden = !backCellView.isHidden
         })

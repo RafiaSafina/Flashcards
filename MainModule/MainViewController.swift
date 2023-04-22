@@ -16,26 +16,40 @@ protocol HeaderCollectionReusableViewDelegate: AnyObject {
     func addNewWord()
 }
 
+protocol DataUpdateDelegate: AnyObject {
+    func reloadData()
+    func insertRow(word: Word)
+}
+
 class MainViewController: UIViewController {
     
     var presenter: MainPresenterProtocol
     
     private var categories = TemporaryData.categories
     
-    private var myWords: [Word] = []
+    private lazy var myWords: [Word] = presenter.words
     private var dictionaryWords: [Word] = []
     private var filteredWords: [Word] = []
     
     private var allWords: [Word] {
-        presenter.words ?? []
+        myWords + dictionaryWords
     }
     
     private var isFlipped = true
+    
+    private let label: WordLabel = {
+        let label = WordLabel()
+        label.isHidden = true
+        label.text = "Tap '+' to add your new word \n or search word in dictionary"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     private let searchResultController = SearchViewController(style: .plain)
     
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: searchResultController)
+        searchController.searchBar.backgroundColor = .clear
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.searchTextField.borderStyle = .roundedRect
         searchController.searchBar.delegate = searchResultController
@@ -49,6 +63,7 @@ class MainViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 0
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .clear
         cv.isScrollEnabled = false
         cv.delegate = self
         cv.dataSource = self
@@ -60,7 +75,7 @@ class MainViewController: UIViewController {
     private lazy var mainCollectionView: UICollectionView = {
         let cv = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         cv.setCollectionViewLayout(createLayout(), animated: true)
-        cv.backgroundColor = .white
+        cv.backgroundColor = .clear
         cv.delegate = self
         cv.dataSource = self
         cv.translatesAutoresizingMaskIntoConstraints = false
@@ -81,12 +96,13 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = Constants.Color.backgroundColor
         filteredWords = allWords
         setNavigationBar()
         setLayout()
         setCellSelected()
         definesPresentationContext = true
+        toggleLabel()
     }
     
     private func setCellSelected() {
@@ -94,6 +110,14 @@ class MainViewController: UIViewController {
         menuCollectionView.selectItem(at: indexPath,
                                       animated: true,
                                       scrollPosition: .bottom)
+    }
+    
+    private func toggleLabel() {
+        if filteredWords.isEmpty {
+            label.isHidden = false
+        } else {
+            label.isHidden = true
+        }
     }
 }
     
@@ -168,12 +192,15 @@ extension MainViewController: UICollectionViewDelegate {
             switch itemIndex {
             case 0:
                 filteredWords = allWords
+                toggleLabel()
                 mainCollectionView.reloadData()
             case 1:
                 filteredWords = myWords
+                toggleLabel()
                 mainCollectionView.reloadData()
             default:
                 filteredWords = dictionaryWords
+                toggleLabel()
                 mainCollectionView.reloadData()
             }
         } else {
@@ -197,10 +224,11 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
 extension MainViewController {
     private func setNavigationBar() {
         let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.backgroundColor = .white
+        navBarAppearance.backgroundColor = Constants.Color.backgroundColor
     
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+        navigationController?.navigationBar.barTintColor = .white
         
         navigationItem.searchController = searchController
     }
@@ -208,14 +236,21 @@ extension MainViewController {
     private func setLayout() {
         view.addSubview(mainCollectionView)
         view.addSubview(menuCollectionView)
-        
-        mainCollectionView.pinEdgesToSuperView()
+        view.insertSubview(label, belowSubview: mainCollectionView)
         
         NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.topAnchor.constraint(equalTo: menuCollectionView.bottomAnchor, constant: view.frame.height / 8),
+            
             menuCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             menuCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             menuCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            menuCollectionView.heightAnchor.constraint(equalToConstant: view.frame.width / 6)
+            menuCollectionView.heightAnchor.constraint(equalToConstant: view.frame.width / 6),
+             
+            mainCollectionView.topAnchor.constraint(equalTo: menuCollectionView.bottomAnchor),
+            mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            mainCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
@@ -231,7 +266,7 @@ extension MainViewController {
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                group.contentInsets = .init(top: 70, leading: 0, bottom: 0, trailing: 0)
+                group.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .groupPagingCentered
@@ -242,12 +277,12 @@ extension MainViewController {
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let groupSize = NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1),
-                    heightDimension: .fractionalHeight(0.15))
+                    heightDimension: .fractionalHeight(0.2))
                 
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-                group.contentInsets = .init(top: 20, leading: 24, bottom: 0, trailing: 24)
+                group.contentInsets = .init(top: 10, leading: 24, bottom: 0, trailing: 24)
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .none
@@ -274,18 +309,28 @@ extension MainViewController: HeaderCollectionReusableViewDelegate {
     }
     
     func addNewWord() {
-        print("newWord")
+        presenter.goToNewWord()
     }
 }
 
-extension MainViewController: MainViewProtocol {
+//MARK: - DataUpdateDelegate
+extension MainViewController: DataUpdateDelegate {
+    func insertRow(word: Word) {
+        print("insert")
+//        self.myWords.append(word)
+//        
+//        let cardIP = IndexPath(item: 0, section: 0)
+//        let mainIP = IndexPath(item: 0, section: 1)
+//
+//        mainCollectionView.reloadData()
+    }
     
-}
-
-extension MainViewController: ReloadDataDelegate {
     func reloadData() {
         mainCollectionView.reloadData()
     }
 }
+
+//MARK: - MainViewProtocol
+extension MainViewController: MainViewProtocol {}
 
 

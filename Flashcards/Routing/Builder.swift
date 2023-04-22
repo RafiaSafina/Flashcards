@@ -9,10 +9,10 @@ import UIKit
 
 protocol BuilderProtocol {
     func createMainViewController(storageManager: StorageManagerProtocol, router: RouterProtocol) -> UIViewController
-    func createResultViewController(networkManager: NetworkManagerProtocol, router: RouterProtocol) -> UIViewController
     func createTestViewController(storageManager: StorageManagerProtocol, router: RouterProtocol) -> UIViewController
-    func createMyWordController(storageManager: StorageManagerProtocol, router: RouterProtocol, word: Word, delegate: ReloadDataDelegate) -> UIViewController
-    func createDictWordController(storageManager: StorageManagerProtocol, router: RouterProtocol, word: DictWord) -> UIViewController
+    func createMyWordController(storageManager: StorageManagerProtocol, router: RouterProtocol, word: Word, delegate: DataUpdateDelegate) -> UIViewController
+    func createNewWordController(storageManager: StorageManagerProtocol, router: RouterProtocol) -> UIViewController
+    func createDictWordController(storageManager: StorageManagerProtocol, router: RouterProtocol, word: DictWord, delegate: DataUpdateDelegate) -> UIViewController
 }
 
 struct Builder: BuilderProtocol {
@@ -24,17 +24,17 @@ struct Builder: BuilderProtocol {
         return view
     }
     
-    func createMyWordController(storageManager: StorageManagerProtocol, router: RouterProtocol, word: Word, delegate: ReloadDataDelegate) -> UIViewController {
-        let presenter = NewWordPresenter(router: router, storageManager: storageManager, word: word)
-        let view = NewWordViewController(presenter: presenter, delegate: delegate)
+    func createMyWordController(storageManager: StorageManagerProtocol, router: RouterProtocol, word: Word, delegate: DataUpdateDelegate) -> UIViewController {
+        let presenter = WordPresenter(router: router, storageManager: storageManager, word: word)
+        let view = MyWordViewController(presenter: presenter, delegate: delegate)
         
         presenter.view = view
         return view
     }
     
-    func createResultViewController(networkManager: NetworkManagerProtocol, router: RouterProtocol) -> UIViewController {
-        let presenter = SearchPresenter(networkManager: networkManager, router: router)
-        let view = SearchViewController(presenter: presenter)
+    func createNewWordController(storageManager: StorageManagerProtocol, router: RouterProtocol) -> UIViewController {
+        let presenter = WordPresenter(router: router, storageManager: storageManager)
+        let view = MyWordViewController(presenter: presenter)
         
         presenter.view = view
         return view
@@ -48,7 +48,11 @@ struct Builder: BuilderProtocol {
         return view
     }
     
-    func createDictWordController(storageManager: StorageManagerProtocol, router: RouterProtocol, word: DictWord) -> UIViewController {
-        return UIViewController()
+    func createDictWordController(storageManager: StorageManagerProtocol, router: RouterProtocol, word: DictWord, delegate: DataUpdateDelegate) -> UIViewController {
+        let presenter = WordPresenter(router: router, storageManager: storageManager, word: word)
+        let view = MyWordViewController(presenter: presenter, delegate: delegate)
+        
+        presenter.view = view
+        return view
     }
 }

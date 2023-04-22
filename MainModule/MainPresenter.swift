@@ -8,23 +8,24 @@
 import UIKit
 
 protocol MainViewProtocol: AnyObject {
-    
+   
 }
 
 protocol MainPresenterProtocol: AnyObject {
-    var words: [Word]? { get set }
+    var words: [Word] { get set }
     func fetchData()
     func didSwipeToDelete(word: Word)
-    func goToMyWord(word: Word, delegate: ReloadDataDelegate)
+    func goToMyWord(word: Word, delegate: DataUpdateDelegate)
+    func goToNewWord()
     func learnButtonTapped()
 }
 
 class MainPresenter: MainPresenterProtocol {
-    
+   
     weak var view: MainViewProtocol?
     let storageManager: StorageManagerProtocol?
     var router: RouterProtocol?
-    var words: [Word]?
+    var words: [Word] = []
     
     init(storageManager: StorageManagerProtocol, router: RouterProtocol) {
         self.storageManager = storageManager
@@ -33,10 +34,10 @@ class MainPresenter: MainPresenterProtocol {
     }
     
     func fetchData() {
-        storageManager?.fetchData(completion: { [weak self] result in
+        storageManager?.fetchData(completion: { result in
             switch result {
             case .success(let words):
-                self?.words = words
+                self.words = words
             case .failure(let error):
                 print(error.localizedDescription)
             }
@@ -47,8 +48,12 @@ class MainPresenter: MainPresenterProtocol {
         storageManager?.delete(word)
     }
     
-    func goToMyWord(word: Word, delegate: ReloadDataDelegate) {
+    func goToMyWord(word: Word, delegate: DataUpdateDelegate) {
         router?.showMyWord(word: word, delegate: delegate)
+    }
+    
+    func goToNewWord() {
+        router?.goToNewWord()
     }
     
     func learnButtonTapped() {

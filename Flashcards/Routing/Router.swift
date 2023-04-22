@@ -15,10 +15,12 @@ protocol RouterMain: AnyObject {
 
 protocol RouterProtocol: RouterMain {
     func initialMainViewController()
-    func showMyWord(word: Word, delegate: ReloadDataDelegate)
+    func showMyWord(word: Word, delegate: DataUpdateDelegate)
     func showTests()
-    func showDictWord(word: DictWord)
+    func goToDictWord(word: DictWord)
+    func goToNewWord()
     func goBackToRoot()
+    
 }
 
 class Router: RouterProtocol {
@@ -42,8 +44,14 @@ class Router: RouterProtocol {
         }
     }
     
-    func showMyWord(word: Word, delegate: ReloadDataDelegate) {
+    func showMyWord(word: Word, delegate: DataUpdateDelegate) {
         let newWordVC = builder.createMyWordController(storageManager: storageManager, router: self, word: word, delegate: delegate)
+        newWordVC.modalPresentationStyle = .popover
+        navigationController?.present(newWordVC, animated: true)
+    }
+    
+    func goToNewWord() {
+        let newWordVC = builder.createNewWordController(storageManager: storageManager, router: self)
         newWordVC.modalPresentationStyle = .popover
         navigationController?.present(newWordVC, animated: true)
     }
@@ -59,7 +67,7 @@ class Router: RouterProtocol {
         }
     }
     
-    func showDictWord(word: DictWord) {
+    func goToDictWord(word: DictWord) {
         print()
     }
 }

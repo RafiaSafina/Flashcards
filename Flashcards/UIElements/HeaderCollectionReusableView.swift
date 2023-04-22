@@ -16,7 +16,7 @@ class HeaderCollectionReusableView: UICollectionReusableView {
         button.addTarget(self, action: #selector(learnButtonPressed), for: .touchUpInside)
         button.setTitle(Constants.String.learnButtonTitle, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .medium)
-        button.setTitleColor(.systemPink.withAlphaComponent(0.3), for: .normal)
+        button.setTitleColor(Constants.Color.accentColor, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -25,14 +25,14 @@ class HeaderCollectionReusableView: UICollectionReusableView {
         let button = UIButton(type: .custom)
         button.addTarget(self, action: #selector(addButtonPressed), for: .touchUpInside)
         button.setImage(UIImage(systemName: Constants.Images.plus), for: .normal)
-        button.tintColor = .systemPink.withAlphaComponent(0.3)
+        button.tintColor = UIColor.accentColor
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .white
+        backgroundColor = .clear
     }
     
     required init?(coder: NSCoder) {

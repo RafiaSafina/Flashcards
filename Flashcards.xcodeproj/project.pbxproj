@@ -24,6 +24,8 @@
 		6C214A7929D62CCF00540AF6 /* UITextField Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7829D62CCF00540AF6 /* UITextField Ext.swift */; };
 		6C214A7B29D63B3900540AF6 /* WordLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A7A29D63B3900540AF6 /* WordLabel.swift */; };
 		6C214A8429DCB8FD00540AF6 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C214A8329DCB8FD00540AF6 /* NetworkManager.swift */; };
+		6C21E07929F2E37800625D62 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C21E07829F2E37800625D62 /* UIColor.swift */; };
+		6C21E07B29F2FBF100625D62 /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C21E07A29F2FBF100625D62 /* CircleView.swift */; };
 		6C2B976329E75DBC003092C2 /* MyWordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B976229E75DBC003092C2 /* MyWordViewController.swift */; };
 		6C2B976629E773EB003092C2 /* DictWordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B976529E773EB003092C2 /* DictWordModel.swift */; };
 		6C2B976829E899D4003092C2 /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2B976729E899D4003092C2 /* SearchTableViewController.swift */; };
@@ -60,6 +62,8 @@
 		6C214A7829D62CCF00540AF6 /* UITextField Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField Ext.swift"; sourceTree = "<group>"; };
 		6C214A7A29D63B3900540AF6 /* WordLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordLabel.swift; sourceTree = "<group>"; };
 		6C214A8329DCB8FD00540AF6 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		6C21E07829F2E37800625D62 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		6C21E07A29F2FBF100625D62 /* CircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleView.swift; sourceTree = "<group>"; };
 		6C2B976229E75DBC003092C2 /* MyWordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWordViewController.swift; sourceTree = "<group>"; };
 		6C2B976529E773EB003092C2 /* DictWordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictWordModel.swift; sourceTree = "<group>"; };
 		6C2B976729E899D4003092C2 /* SearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
@@ -138,6 +142,7 @@
 				6C214A7A29D63B3900540AF6 /* WordLabel.swift */,
 				6C2B977529EED2F9003092C2 /* TranslationLabel.swift */,
 				6C2B977329EEC961003092C2 /* CardView.swift */,
+				6C21E07A29F2FBF100625D62 /* CircleView.swift */,
 			);
 			path = UIElements;
 			sourceTree = "<group>";
@@ -178,6 +183,7 @@
 				6C214A7829D62CCF00540AF6 /* UITextField Ext.swift */,
 				6C2B977929EED384003092C2 /* UIView Ext.swift */,
 				6C2B977729EED34D003092C2 /* UILabel Ext.swift */,
+				6C21E07829F2E37800625D62 /* UIColor.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -314,6 +320,8 @@
 				6C2B978229EF1EFC003092C2 /* SearchPresenter.swift in Sources */,
 				6C2B976829E899D4003092C2 /* SearchTableViewController.swift in Sources */,
 				6C214A3A29C28EEE00540AF6 /* MenuCell.swift in Sources */,
+				6C21E07929F2E37800625D62 /* UIColor.swift in Sources */,
+				6C21E07B29F2FBF100625D62 /* CircleView.swift in Sources */,
 				6C214A7B29D63B3900540AF6 /* WordLabel.swift in Sources */,
 				6C214A6029CEEB9000540AF6 /* TemporaryData.swift in Sources */,
 				6C214A2029BEA65E00540AF6 /* MainViewController.swift in Sources */,

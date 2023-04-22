@@ -41,6 +41,7 @@ final class MainCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        contentView.backgroundColor = .clear
         setupSubviews()
         cellView.addGestureRecognizer(leftSwipeGesture)
         cellView.addGestureRecognizer(rightSwipeGesture)

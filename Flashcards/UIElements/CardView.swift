@@ -10,12 +10,12 @@ import UIKit
 class CardView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .white
-        self.layer.shadowColor = UIColor.gray.cgColor
+        self.backgroundColor = Constants.Color.cellColor
+        self.layer.shadowColor = Constants.Color.shadowColor.cgColor
         self.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
         self.layer.shadowOpacity = 1.0
         self.layer.masksToBounds = false
-        self.layer.cornerRadius = 10.0
+        self.layer.cornerRadius = 20.0
         self.translatesAutoresizingMaskIntoConstraints = false
     }
     

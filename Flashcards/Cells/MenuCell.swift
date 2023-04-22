@@ -17,7 +17,7 @@ final class MenuCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .clear
     }
     
     required init?(coder: NSCoder) {
@@ -27,8 +27,8 @@ final class MenuCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             categoryLabel.textColor = isSelected
-            ? .systemPink.withAlphaComponent(0.3)
-            : .black
+            ? Constants.Color.accentColor
+            : Constants.Color.fontColor
         }
     }
     

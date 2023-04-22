@@ -11,7 +11,7 @@ extension UILabel {
     func configureLabel(fontWight: UIFont.Weight) {
         self.numberOfLines = 0
         self.font = UIFont.systemFont(ofSize: 20, weight: fontWight)
-        self.textColor = .black
+        self.textColor = Constants.Color.fontColor
         self.textAlignment = .center
         self.translatesAutoresizingMaskIntoConstraints = false
     }

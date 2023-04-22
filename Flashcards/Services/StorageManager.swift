@@ -35,14 +35,6 @@ final class StorageManager: StorageManagerProtocol {
     }
     
     // MARK: - CRUD
-    func create(_ wordName: String, translation: String, completion: (Word) -> Void) {
-        let word = Word(context: viewContext)
-        word.name = wordName
-        word.translation = translation
-        word.isLearnt = false
-        completion(word)
-        saveContext()
-    }
     
     func fetchData(completion: (Result<[Word], Error>) -> Void) {
         let fetchRequest = Word.fetchRequest()
@@ -55,6 +47,16 @@ final class StorageManager: StorageManagerProtocol {
         }
     }
     
+    func create(_ wordName: String, translation: String, completion: (Word) -> Void) {
+        let word = Word(context: viewContext)
+        word.name = wordName
+        word.translation = translation
+        word.isLearnt = false
+        word.category = Constants.Categories.myWords
+        completion(word)
+        saveContext()
+    }
+    
     func update(_ word: Word, newName: String, newTranslation: String) {
         word.name = newName
         word.translation = newTranslation
@@ -63,6 +65,11 @@ final class StorageManager: StorageManagerProtocol {
     
     func updateStatus(_ word: Word, isLearnt: Bool) {
         word.isLearnt = isLearnt
+        saveContext()
+    }
+    
+    func updateCategory(_ word: Word, category: String) {
+        word.category = category
         saveContext()
     }
     

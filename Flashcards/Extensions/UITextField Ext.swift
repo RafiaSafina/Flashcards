@@ -10,11 +10,11 @@ import UIKit
 extension UITextField {
     func configureTF(fontWeight: UIFont.Weight) {
         self.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-        self.textColor = .black
+        self.textColor = Constants.Color.fontColor
         self.borderStyle = .none
         
         var bottomLine = CALayer()
-        bottomLine.backgroundColor = UIColor.black.cgColor
+        bottomLine.backgroundColor = UIColor.white.cgColor
         bottomLine.frame = CGRect(x: 0.0,
                                   y: self.frame.height - 1,
                                   width: self.frame.width,

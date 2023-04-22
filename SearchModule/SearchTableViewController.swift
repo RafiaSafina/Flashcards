@@ -66,23 +66,48 @@ class SearchViewController: UITableViewController {
 extension SearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
-        guard let resultController = searchController.searchResultsController as? SearchViewController else { return }
+//        guard let resultController = searchController.searchResultsController as? SearchViewController else { return }
         
-        presenter?.fetchData(text: text) { [unowned self] word in
-            print(word)
-            if !word.def.isEmpty {
-                let text = word.def[0].text
-                if text.count > resultController.items.last?.count ?? 0 {
-                    self.words.append(word)
-                    resultController.items.append(text)
-                    resultController.tableView.reloadData()
-                } else {
-                    self.words.removeLast()
-                    resultController.items.removeLast()
-                    resultController.tableView.reloadData()
-                }
-            }
-        }
+        presenter?.fetchData(text: text)
+        
+//        presenter?.fetchData(text: text) { [unowned self] word in
+//            if !word.def.isEmpty {
+//                let text = word.def[0].text
+//                if text.count > resultController.items.last?.count ?? 0 {
+//                    self.words.append(word)
+//                    resultController.items.append(text)
+//                    resultController.tableView.reloadData()
+//                } else {
+//                    self.words.removeLast()
+//                    resultController.items.removeLast()
+//                    resultController.tableView.reloadData()
+//                }
+//            }
+//        }
+    }
+//    func getResults(searchController: UISearchController) {
+//        guard let resultController = searchController.searchResultsController as? SearchViewController else { return }
+//        if !word.def.isEmpty {
+//            let text = word.def[0].text
+//            if text.count > resultController.items.last?.count ?? 0 {
+//                self.words.append(word)
+//                resultController.items.append(text)
+//                resultController.tableView.reloadData()
+//            } else {
+//                self.words.removeLast()
+//                resultController.items.removeLast()
+//                resultController.tableView.reloadData()
+//            }
+//        }
+//    }
+    
+}
+//MARK: - ResultViewProtocol
+extension SearchViewController: SearchViewProtocol {
+    func success(word: DictWord) {
+        self.words.append(word)
+        print(self.words)
+        
     }
 }
 
@@ -96,8 +121,3 @@ extension SearchViewController: UISearchBarDelegate {
         }
     }
 }
-//MARK: - ResultViewProtocol
-extension SearchViewController: SearchViewProtocol {
-    
-}
-
