@@ -10,7 +10,9 @@ import UIKit
 protocol SwipeCardsDelegate: AnyObject {
     func swipeDidEnd(on view: SwipeCardView)
     func updateWordStatus(word: Word, isLearnt: Bool)
+    func countRightWrongAnswers(isRight: Bool)
 }
+
 
 class StackContainerView: UIView {
     
@@ -34,7 +36,7 @@ class StackContainerView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .white
+        backgroundColor = .clear
         translatesAutoresizingMaskIntoConstraints = false
     }
     
@@ -53,6 +55,7 @@ class StackContainerView: UIView {
         for index in 0..<min(numberOfCardsToShow, numberOfVisibleCards) {
             addCardView(cardView: dataSource.showCard(at: index), atIndex: index)
         }
+        
     }
     
     private func addCardView(cardView: SwipeCardView, atIndex index: Int) {
@@ -65,8 +68,8 @@ class StackContainerView: UIView {
     
     private func addCardFrame(index: Int, cardView: SwipeCardView) {
         var cardViewFrame = bounds
-        let horizontalInset = (CGFloat(index) * self.horizontalInset)
-        let verticalInset = (CGFloat(index) * self.verticalInset)
+        let horizontalInset = (CGFloat(index) * horizontalInset)
+        let verticalInset = (CGFloat(index) * verticalInset)
         
         cardViewFrame.size.width -= 2 * horizontalInset
         cardViewFrame.origin.x += horizontalInset
@@ -106,5 +109,9 @@ extension StackContainerView: SwipeCardsDelegate {
     
     func updateWordStatus(word: Word, isLearnt: Bool) {
         dataSource?.update(word: word, isLearnt: isLearnt)
+    }
+    
+    func countRightWrongAnswers(isRight: Bool) {
+        dataSource?.countAnswers(isRightAnswer: isRight)
     }
 }

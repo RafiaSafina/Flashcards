@@ -47,12 +47,13 @@ class WordPresenter: NewWordPresenterProtocol {
         self.storageManager = storageManager
         self.dictWord = word
         self.isButtonShown = true
-    } //create word from dictWord
+    } //creating word from dictWord
     
     init(router: RouterProtocol, storageManager: StorageManagerProtocol) {
         self.router = router
         self.storageManager = storageManager
     } // creating new word
+    
 
     func setWord() {
         guard let word = word else { return }

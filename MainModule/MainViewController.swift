@@ -11,39 +11,38 @@ protocol SwipeableCollectionViewCellDelegate: AnyObject {
     func hiddenContainerViewTapped(inCell cell: UICollectionViewCell)
 }
 
-protocol HeaderCollectionReusableViewDelegate: AnyObject {
+protocol MainViewControllerDelegate: AnyObject {
     func goToTestViewController()
     func addNewWord()
 }
 
 protocol DataUpdateDelegate: AnyObject {
     func reloadData()
-    func insertRow(word: Word)
+    func insertItem(word: Word)
 }
 
 class MainViewController: UIViewController {
     
     var presenter: MainPresenterProtocol
-    
+
     private var categories = TemporaryData.categories
     
-    private lazy var myWords: [Word] = presenter.words
-    private var dictionaryWords: [Word] = []
     private var filteredWords: [Word] = []
+    private var dictionaryWords: [Word] = []
+    private lazy var myWords: [Word] = presenter.words
     
     private var allWords: [Word] {
         myWords + dictionaryWords
     }
     
     private var isFlipped = true
+    private var isDictWordsSelected = false
+    private var isAnimationInProgress = false
     
-    private let label: WordLabel = {
-        let label = WordLabel()
-        label.isHidden = true
-        label.text = "Tap '+' to add your new word \n or search word in dictionary"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private var menuCollectionViewHeightConstraint: NSLayoutConstraint?
+    
+    private let zeroSectionTipLabel = WordLabel()
+    private let firstSectionTipLabel = WordLabel()
     
     private let searchResultController = SearchViewController(style: .plain)
     
@@ -101,8 +100,8 @@ class MainViewController: UIViewController {
         setNavigationBar()
         setLayout()
         setCellSelected()
+        toggleLabels()
         definesPresentationContext = true
-        toggleLabel()
     }
     
     private func setCellSelected() {
@@ -112,12 +111,22 @@ class MainViewController: UIViewController {
                                       scrollPosition: .bottom)
     }
     
-    private func toggleLabel() {
+    private func toggleLabels() {
         if filteredWords.isEmpty {
-            label.isHidden = false
+            zeroSectionTipLabel.isHidden = false
+            firstSectionTipLabel.isHidden = false
         } else {
-            label.isHidden = true
+            zeroSectionTipLabel.isHidden = true
+            firstSectionTipLabel.isHidden = true
         }
+    }
+    
+    private func reloadDataAfterSelecting(category: [Word], text: String) {
+        filteredWords = category
+        mainCollectionView.reloadData()
+        toggleLabels()
+        firstSectionTipLabel.text = "Tap 'Learn' to check yourself"
+        zeroSectionTipLabel.text = text
     }
 }
     
@@ -162,25 +171,29 @@ extension MainViewController: UICollectionViewDataSource {
                 cell.configure(name: name, translation: translation)
                 
                 return cell
-                
             default:
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.ReuseIdentifiers.mainCell, for: indexPath) as? MainCollectionViewCell else { return UICollectionViewCell() }
                 
                 let word = filteredWords[indexPath.item]
                 
-                guard let name = word.name, let translation = word.translation else {
+                guard let name = word.name,
+                      let translation = word.translation else {
                     return UICollectionViewCell() }
                 
                 cell.configure(word: name, translation: translation)
                 cell.deleteHandler = { [weak self] in
-                    self?.presenter.didSwipeToDelete(word: word)
-                    self?.filteredWords.remove(at: indexPath.item)
+                    guard let self = self else { return }
+                    self.presenter.didSwipeToDelete(word: word)
+                    self.filteredWords.remove(at: indexPath.item)
+                    self.myWords.remove(at: indexPath.item)
                     collectionView.deleteItems(at: [indexPath])
                 }
                 return cell
             }
         }
     }
+    
+    
 }
 
 //MARK: - UICollectionViewDelegate
@@ -191,17 +204,11 @@ extension MainViewController: UICollectionViewDelegate {
         if collectionView == menuCollectionView {
             switch itemIndex {
             case 0:
-                filteredWords = allWords
-                toggleLabel()
-                mainCollectionView.reloadData()
+                reloadDataAfterSelecting(category: allWords, text: "Tap '+' to add your new word \n or search word in dictionary")
             case 1:
-                filteredWords = myWords
-                toggleLabel()
-                mainCollectionView.reloadData()
+                reloadDataAfterSelecting(category: myWords, text: "Tap '+' to add your new word")
             default:
-                filteredWords = dictionaryWords
-                toggleLabel()
-                mainCollectionView.reloadData()
+                reloadDataAfterSelecting(category: dictionaryWords, text: "Find your word in dictionary")
             }
         } else {
             let word = filteredWords[indexPath.item]
@@ -236,11 +243,15 @@ extension MainViewController {
     private func setLayout() {
         view.addSubview(mainCollectionView)
         view.addSubview(menuCollectionView)
-        view.insertSubview(label, belowSubview: mainCollectionView)
+        view.insertSubview(zeroSectionTipLabel, belowSubview: mainCollectionView)
+        view.insertSubview(firstSectionTipLabel, belowSubview: mainCollectionView)
         
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.topAnchor.constraint(equalTo: menuCollectionView.bottomAnchor, constant: view.frame.height / 8),
+            zeroSectionTipLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            zeroSectionTipLabel.topAnchor.constraint(equalTo: menuCollectionView.topAnchor, constant: view.frame.height / 4),
+            
+            firstSectionTipLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            firstSectionTipLabel.bottomAnchor.constraint(equalTo: zeroSectionTipLabel.bottomAnchor, constant: view.frame.height / 4),
             
             menuCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             menuCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -272,7 +283,9 @@ extension MainViewController {
                 section.orthogonalScrollingBehavior = .groupPagingCentered
                 section.interGroupSpacing = 10
                 section.supplementariesFollowContentInsets = false
+                
                 return section
+                
             default:
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let groupSize = NSCollectionLayoutSize(
@@ -289,40 +302,53 @@ extension MainViewController {
                 section.interGroupSpacing = 10
                 section.boundarySupplementaryItems = [self.supplementaryHeaderItem()]
                 section.supplementariesFollowContentInsets = false
+                
                 return section
             }
         }
     }
     
     private func supplementaryHeaderItem() -> NSCollectionLayoutBoundarySupplementaryItem {
-        .init(layoutSize: .init(widthDimension: .fractionalWidth(1),
-                                heightDimension: .fractionalHeight(0.08)),
-              elementKind: UICollectionView.elementKindSectionHeader,
-              alignment: .topLeading)
+        let layoutSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.08))
+        let headerElement = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: layoutSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+        headerElement.pinToVisibleBounds = true
+        
+        return headerElement
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+            
+        if scrollView.contentOffset.y > 0 {
+            menuCollectionView.isHidden = true
+        } else {
+            menuCollectionView.isHidden = false
+        }
     }
 }
 
 //MARK: - HeaderCollectionReusableViewDelegate
-extension MainViewController: HeaderCollectionReusableViewDelegate {
+extension MainViewController: MainViewControllerDelegate {
+    
     func goToTestViewController() {
         presenter.learnButtonTapped()
     }
     
     func addNewWord() {
-        presenter.goToNewWord()
+        presenter.goToNewWord(delegate: self)
     }
 }
 
 //MARK: - DataUpdateDelegate
 extension MainViewController: DataUpdateDelegate {
-    func insertRow(word: Word) {
-        print("insert")
-//        self.myWords.append(word)
-//        
-//        let cardIP = IndexPath(item: 0, section: 0)
-//        let mainIP = IndexPath(item: 0, section: 1)
-//
-//        mainCollectionView.reloadData()
+    func insertItem(word: Word) {
+        self.myWords.append(word)
+        self.filteredWords.append(word)
+        let indexPath = [IndexPath(item: myWords.count - 1, section: 0),
+                         IndexPath(item: myWords.count - 1, section: 1)]
+        mainCollectionView.insertItems(at: indexPath)
+        
+        let bottomOffset = CGPoint(x: 0, y: mainCollectionView.contentSize.height - mainCollectionView.bounds.height + mainCollectionView.contentInset.bottom)
+        mainCollectionView.setContentOffset(bottomOffset, animated: true)
     }
     
     func reloadData() {

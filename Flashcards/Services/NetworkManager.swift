@@ -8,14 +8,14 @@
 import Foundation
 
 protocol NetworkManagerProtocol {
-    func fetchData(text: String, completion: @escaping (Result<DictWord, NetworkError>) -> Void)
+    func request(text: String, completion: @escaping (Result<DictWord, NetworkError>) -> Void)
 }
 
 class NetworkManager: NetworkManagerProtocol {
     
     let key = Constants.String.key
     
-    func fetchData(text: String, completion: @escaping (Result<DictWord, NetworkError>) -> Void) {
+    func request(text: String, completion: @escaping (Result<DictWord, NetworkError>) -> Void) {
         guard let formatedQuery = text.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)  else { return }
         
         let url = "https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=\(key)&lang=en-ru&text=\(formatedQuery)"

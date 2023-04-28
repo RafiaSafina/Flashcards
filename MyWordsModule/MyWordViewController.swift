@@ -77,24 +77,22 @@ class MyWordViewController: UIViewController {
     }()
     
     private lazy var wordTF: UITextField = {
-        let tf = UITextField()
-        tf.text = ""
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        tf.configureTF(fontWeight: .bold)
-        tf.becomeFirstResponder()
-        return tf
+        let textField = UITextField()
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.configureTF(fontWeight: .bold)
+        textField.becomeFirstResponder()
+        return textField
     }()
     
     private let translationTF: UITextField = {
-        let tf = UITextField()
-        tf.configureTF(fontWeight: .regular)
-        tf.text = ""
-        return tf
+        let textField = UITextField()
+        textField.configureTF(fontWeight: .regular)
+        return textField
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white.withAlphaComponent(0.2)
+        view.backgroundColor = .clear
         setupLayout()
         favoriteView.isHidden = true
         presenter.setWord()
@@ -129,16 +127,25 @@ class MyWordViewController: UIViewController {
     }
     
     @objc private func saveButtonTapped() {
-        guard let word = wordTF.text, let translation = translationTF.text else { return }
-        if isUpdating {
-            presenter.update(newName: word, newTranslation: translation)
-            delegate?.reloadData()
-        } else {
-            presenter.create(word: word, translation: translation)
-            guard let word = presenter.word else { return }
-            delegate?.insertRow(word: word)
-        }
+        guard let word = wordTF.text,
+              let translation = translationTF.text else { return }
+        
+        isUpdating
+        ? updateWord(word: word, translation: translation)
+        :  createNewWord(word: word, translation: translation)
+
         presenter.goBackToRoot()
+    }
+    
+    private func updateWord(word: String, translation: String) {
+        presenter.update(newName: word, newTranslation: translation)
+        delegate?.reloadData()
+    }
+    
+    private func createNewWord(word: String, translation: String) {
+        presenter.create(word: word, translation: translation)
+        guard let word = presenter.word else { return }
+        delegate?.insertItem(word: word)
     }
     
     private func setupLayout() {

@@ -9,9 +9,7 @@ import UIKit
 
 class SearchViewController: UITableViewController {
     
-    private var items: [String] = []
-    
-    private var words: [DictWord] = []
+    private var dictWords: [DictWord] = []
     
     var presenter: SearchPresenterProtocol?
 
@@ -19,6 +17,7 @@ class SearchViewController: UITableViewController {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.ReuseIdentifiers.searchCell)
         view.backgroundColor = .white
+        dictWords = presenter?.dictWords ?? []
     }
     
     init(presenter: SearchPresenterProtocol) {
@@ -35,14 +34,16 @@ class SearchViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        items.count
+        dictWords.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.ReuseIdentifiers.searchCell, for: indexPath)
         
+        let word = dictWords[indexPath.row].def[0].text
+        
         var content = cell.defaultContentConfiguration()
-        content.text = items[indexPath.row]
+        content.text = word
         content.textProperties.color = .black
         
         var backgroundConfig = UIBackgroundConfiguration.listPlainCell()
@@ -57,7 +58,7 @@ class SearchViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let word = words[indexPath.row]
+        let word = dictWords[indexPath.row]
         presenter?.didTapOnCell(word: word)
     }
 }
@@ -66,57 +67,33 @@ class SearchViewController: UITableViewController {
 extension SearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
-//        guard let resultController = searchController.searchResultsController as? SearchViewController else { return }
+        guard let resultController = searchController.searchResultsController as? SearchViewController else { return }
         
-        presenter?.fetchData(text: text)
-        
-//        presenter?.fetchData(text: text) { [unowned self] word in
-//            if !word.def.isEmpty {
-//                let text = word.def[0].text
-//                if text.count > resultController.items.last?.count ?? 0 {
-//                    self.words.append(word)
-//                    resultController.items.append(text)
-//                    resultController.tableView.reloadData()
-//                } else {
-//                    self.words.removeLast()
-//                    resultController.items.removeLast()
-//                    resultController.tableView.reloadData()
-//                }
-//            }
-//        }
-    }
-//    func getResults(searchController: UISearchController) {
-//        guard let resultController = searchController.searchResultsController as? SearchViewController else { return }
-//        if !word.def.isEmpty {
-//            let text = word.def[0].text
-//            if text.count > resultController.items.last?.count ?? 0 {
-//                self.words.append(word)
-//                resultController.items.append(text)
-//                resultController.tableView.reloadData()
-//            } else {
-//                self.words.removeLast()
-//                resultController.items.removeLast()
-//                resultController.tableView.reloadData()
-//            }
-//        }
-//    }
-    
+        presenter?.request(text: text, completion: { word in
+            if !word.def.isEmpty {
+                
+                let text = word.def[0].text
+                guard let dictWord = resultController.dictWords[0].def.last?.text else { return }
+                
+                if text.count > dictWord.count {
+                    resultController.dictWords.append(word)
+                    resultController.tableView.reloadData()
+                } else {
+                    resultController.dictWords.removeLast()
+                    resultController.tableView.reloadData()
+                }
+            }
+        })
+    }    
 }
 //MARK: - ResultViewProtocol
-extension SearchViewController: SearchViewProtocol {
-    func success(word: DictWord) {
-        self.words.append(word)
-        print(self.words)
-        
-    }
-}
+extension SearchViewController: SearchViewProtocol {}
 
 //MARK: - UISearchBarDelegate
 extension SearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
-            items.removeAll()
-            words.removeAll()
+            dictWords.removeAll()
             tableView.reloadData()
         }
     }

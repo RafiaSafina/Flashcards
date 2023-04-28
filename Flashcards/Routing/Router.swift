@@ -18,7 +18,7 @@ protocol RouterProtocol: RouterMain {
     func showMyWord(word: Word, delegate: DataUpdateDelegate)
     func showTests()
     func goToDictWord(word: DictWord)
-    func goToNewWord()
+    func goToNewWord(delegate: DataUpdateDelegate)
     func goBackToRoot()
     
 }
@@ -40,18 +40,20 @@ class Router: RouterProtocol {
     func initialMainViewController() {
         if let navigationController = navigationController {
             let mainViewController = builder.createMainViewController(storageManager: storageManager, router: self)
+            let searchController = builder.createSearchViewController(networkManager: networkManager, router: self)
             navigationController.viewControllers = [mainViewController]
+
         }
     }
     
     func showMyWord(word: Word, delegate: DataUpdateDelegate) {
         let newWordVC = builder.createMyWordController(storageManager: storageManager, router: self, word: word, delegate: delegate)
-        newWordVC.modalPresentationStyle = .popover
+        newWordVC.modalPresentationStyle = .automatic
         navigationController?.present(newWordVC, animated: true)
     }
     
-    func goToNewWord() {
-        let newWordVC = builder.createNewWordController(storageManager: storageManager, router: self)
+    func goToNewWord(delegate: DataUpdateDelegate) {
+        let newWordVC = builder.createNewWordController(storageManager: storageManager, router: self, delegate: delegate)
         newWordVC.modalPresentationStyle = .popover
         navigationController?.present(newWordVC, animated: true)
     }

@@ -9,27 +9,27 @@ import UIKit
 
 class SwipeCardView: UIView {
     
+    weak var delegate: SwipeCardsDelegate?
+    
     var dataSourse: Word? {
         didSet {
             wordLabel.text = dataSourse?.name
+            
         }
     }
     
-    weak var delegate: SwipeCardsDelegate?
-    
     private lazy var panGesture: UIPanGestureRecognizer = {
-        let pan = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+        let pan = UIPanGestureRecognizer(target: self,
+                                         action: #selector(didPan))
         return pan
     }()
 
-    
-    private lazy var frontView = CardView()
+    private var frontView = CardView()
     private let wordLabel = WordLabel()
  
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .white
+        backgroundColor = .clear
         addGestureRecognizer(panGesture)
     }
     
@@ -49,22 +49,21 @@ class SwipeCardView: UIView {
         switch panGesture.state {
         case .ended:
             if card.center.x > 400 {
-                delegate?.swipeDidEnd(on: card)
-
                 swipe(card: card,
                       point: point,
                       centerOfParentContainer: centerOfParentContainer) //swipe right
                 
                 updateWordStatus()
+                delegate?.countRightWrongAnswers(isRight: true)
                 
                 return
             } else if card.center.x < -65 {
-                delegate?.swipeDidEnd(on: card)
-                
                 swipe(card: card,
                       point: point,
                       centerOfParentContainer: centerOfParentContainer) //swipe left
             
+                delegate?.countRightWrongAnswers(isRight: false)
+                
                 return
             }
             
@@ -83,9 +82,14 @@ class SwipeCardView: UIView {
         }
     }
     
-    private func swipe(card: SwipeCardView, point: CGPoint, centerOfParentContainer: CGPoint) {
-        card.center = CGPoint(x: self.center.x + point.x,
-                              y: self.center.y + point.y)
+    private func swipe(card: SwipeCardView,
+                       point: CGPoint,
+                       centerOfParentContainer: CGPoint) {
+        
+        delegate?.swipeDidEnd(on: card)
+        
+        card.center = CGPoint(x: self.center.x + point.x, y: self.center.y + point.y)
+        
         UIView.animate(withDuration: 0.2) {
             card.center = CGPoint(x: centerOfParentContainer.x + point.x + 200,
                                   y: centerOfParentContainer.y + point.y + 75)

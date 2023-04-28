@@ -12,17 +12,14 @@ protocol SwipeCardsDataSource: AnyObject {
     func showCard(at index: Int) -> SwipeCardView
     func update(word: Word, isLearnt: Bool)
     func countPreviousWords()
-    func countWrongAnswers()
-    func countRightAnswers()
+    func countAnswers(isRightAnswer: Bool)
 }
 
 class TestViewController: UIViewController {
     
     var presenter: TestPresenterProtocol
     
-    private var wordsToLearn: [Word] {
-        presenter.words ?? []
-    }
+    private var wordsToLearn: [Word] = []
     
     private lazy var totalWords = wordsToLearn.count
     private var previousWordsCount = 0
@@ -46,13 +43,24 @@ class TestViewController: UIViewController {
     
     private var stackContainerView = StackContainerView()
     
+    private lazy var restartButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.frame = CGRect(x: 0, y: 0, width: 100, height: 20)
+        button.tintColor = .accentColor
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 24, weight: .bold)
+        button.setTitle("Restart", for: .normal)
+        button.addTarget(self, action: #selector(didTapRestartButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        wordsToLearn = presenter.words ?? []
         setupLayout()
         setupNavigationBar()
-        view.backgroundColor = .white
+        view.backgroundColor = Constants.Color.backgroundColor
         stackContainerView.dataSource = self
-        print(wordsToLearn)
     }
     
     init(presenter: TestPresenterProtocol) {
@@ -61,13 +69,18 @@ class TestViewController: UIViewController {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(Constants.String.initError)
+    }
+    
+    @objc private func didTapRestartButton() {
+        print()
     }
     
     @objc private func backToRoot() {
-        navigationController?.popToRootViewController(animated: true)
+        presenter.goBactToRoot()
     }
 }
+
 //MARK: - Set UI
 extension TestViewController {
     
@@ -78,7 +91,7 @@ extension TestViewController {
         title = previousWordsCount + "/" + totalWords
         
         let leftBarItem = UIBarButtonItem(image: UIImage(systemName: Constants.Images.xmark), style: .plain, target: self, action: #selector(backToRoot))
-        leftBarItem.tintColor = .systemPink.withAlphaComponent(0.3)
+        leftBarItem.tintColor = Constants.Color.accentColor
         
         navigationItem.leftBarButtonItem = leftBarItem
     }
@@ -87,6 +100,7 @@ extension TestViewController {
         view.addSubview(stackContainerView)
         view.addSubview(wrongAnswerLabel)
         view.addSubview(rightAnswerLabel)
+        view.addSubview(restartButton)
         
         NSLayoutConstraint.activate([
             wrongAnswerLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
@@ -98,27 +112,31 @@ extension TestViewController {
             stackContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stackContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             stackContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 3/4),
-            stackContainerView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 2/3)
+            stackContainerView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 2/3),
+            
+            restartButton.topAnchor.constraint(equalTo: stackContainerView.bottomAnchor, constant: 40),
+            restartButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
 }
 //MARK: - SwipeCardsDataSource
 extension TestViewController: SwipeCardsDataSource {
-    func countWrongAnswers() {
-        wrongAnswers += 1
-        wrongAnswerLabel.text =  String(wrongAnswers)
-    }
-    
-    func countRightAnswers() {
-        rightAnswers += 1
-        rightAnswerLabel.text = String(rightAnswers)
+    func countAnswers(isRightAnswer: Bool) {
+        
+        if isRightAnswer == true {
+            rightAnswers += 1
+            rightAnswerLabel.text = String(rightAnswers)
+        } else {
+            wrongAnswers += 1
+            wrongAnswerLabel.text = String(wrongAnswers)
+        }
     }
     
     func countPreviousWords() {
         previousWordsCount += 1
         let prevWordsCount = String(previousWordsCount)
         let totalWords = String(totalWords)
-        title = prevWordsCount + totalWords
+        title = prevWordsCount + "/" + totalWords
     }
     
     func update(word: Word, isLearnt: Bool) {
@@ -137,7 +155,5 @@ extension TestViewController: SwipeCardsDataSource {
 }
 
 //MARK: - TestViewProtocol
-extension TestViewController: TestViewProtocol {
-    
-}
+extension TestViewController: TestViewProtocol {}
 

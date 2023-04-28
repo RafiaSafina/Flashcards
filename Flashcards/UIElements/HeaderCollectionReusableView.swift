@@ -9,7 +9,7 @@ import UIKit
 
 class HeaderCollectionReusableView: UICollectionReusableView {
     
-    weak var delegate: HeaderCollectionReusableViewDelegate?
+    weak var delegate: MainViewControllerDelegate?
     
     private lazy var learnButton: UIButton = {
         let button = UIButton(type: .system)
@@ -32,7 +32,7 @@ class HeaderCollectionReusableView: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .clear
+        backgroundColor = .backgroundColor
     }
     
     required init?(coder: NSCoder) {
@@ -60,3 +60,5 @@ class HeaderCollectionReusableView: UICollectionReusableView {
         ])
     }
 }
+
+

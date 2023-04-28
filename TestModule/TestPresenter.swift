@@ -15,6 +15,7 @@ protocol TestPresenterProtocol: AnyObject {
     var words: [Word]? { get set }
     func fetchData()
     func saveWord(word: Word, isLearnt: Bool)
+    func goBactToRoot()
 }
 
 class TestPresenter: TestPresenterProtocol {
@@ -36,7 +37,8 @@ class TestPresenter: TestPresenterProtocol {
     }
     
     func fetchData() {
-        storageManager?.fetchData(completion: { result in
+        storageManager?.fetchData(completion: { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success(let words):
                 self.words = words.filter { $0.isLearnt == false }
@@ -44,5 +46,9 @@ class TestPresenter: TestPresenterProtocol {
                 print(error.localizedDescription)
             }
         })
+    }
+    
+    func goBactToRoot() {
+        router?.goBackToRoot()
     }
 }

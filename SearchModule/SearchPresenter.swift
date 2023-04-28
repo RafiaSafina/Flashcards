@@ -7,19 +7,17 @@
 
 import Foundation
 
-protocol SearchViewProtocol: AnyObject {
-    func success(word: DictWord)
-}
+protocol SearchViewProtocol: AnyObject {}
 
 protocol SearchPresenterProtocol: AnyObject {
-    var dictWords: [DictWord] { get set }
-    func fetchData(text: String)
+    var dictWords: [DictWord]? { get set }
+    func request(text: String, completion: @escaping (DictWord) -> Void)
     func didTapOnCell(word: DictWord)
 }
 
 class SearchPresenter: SearchPresenterProtocol {
     
-    var dictWords: [DictWord] = []
+    var dictWords: [DictWord]?
     
     weak var view: SearchViewProtocol?
     var router: RouterProtocol?
@@ -30,12 +28,13 @@ class SearchPresenter: SearchPresenterProtocol {
         self.router = router
     }
     
-    func fetchData(text: String) {
-        networkManager.fetchData(text: text) { result in
+    func request(text: String, completion: @escaping (DictWord) -> Void) {
+        networkManager.request(text: text) { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success(let word):
-//                self.dictWords.append(word)
-                self.view?.success(word: word)
+                self.dictWords?.append(word)
+                completion(word)
             case .failure(let error):
                 print(error.localizedDescription)
             }

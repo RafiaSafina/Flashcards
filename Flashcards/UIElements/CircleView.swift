@@ -12,6 +12,7 @@ class CircleView: CardView {
     override init(frame: CGRect) {
         super.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         self.layer.cornerRadius = self.frame.height / 2
+        self.translatesAutoresizingMaskIntoConstraints = false
     }
     
     required init?(coder: NSCoder) {

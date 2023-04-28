@@ -15,7 +15,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        window?.makeKeyAndVisible()
         
         let builder: BuilderProtocol = Builder()
         let navController = UINavigationController()
@@ -23,7 +22,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let router = Router(builder: builder, navigationController: navController)
         router.initialMainViewController()
         
-        window?.rootViewController =  navController
+        window?.rootViewController = navController
+        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

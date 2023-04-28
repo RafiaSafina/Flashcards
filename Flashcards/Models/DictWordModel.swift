@@ -5,8 +5,6 @@
 //  Created by Рафия Сафина on 13.04.2023.
 //
 
-
-
 struct DictWord: Decodable {
     let def: [Def]
 }
